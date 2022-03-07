@@ -20,20 +20,18 @@ const authentication_1 = require("../EmployeeAndAccounts/authentication");
 const rootQueryMutaions_1 = require("./rootQueryMutaions");
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
+const storage_1 = require("firebase/storage");
+const firebaseConfig_1 = __importDefault(require("../firebaseConfig"));
 let productRoute = express_1.default.Router();
 const mediaDIR = path_1.default.join(__dirname, '..', 'media', 'products');
 const dataPool = new client_1.PrismaClient();
 //initialize multer
-const multerStorage = multer_1.default.diskStorage({
-    destination: (req, file, callback) => {
-        callback(null, mediaDIR);
-    },
-    filename: (req, file, callback) => {
-        const currDate = new Date().toISOString();
-        callback(null, req.params.productId + "_" + file.originalname);
+const upload = (0, multer_1.default)({
+    storage: multer_1.default.memoryStorage(),
+    limits: {
+        fileSize: 5 * 1024 * 1024 // no larger than 5mb, you can change as needed.
     }
 });
-const upload = (0, multer_1.default)({ storage: multerStorage });
 //use static files 
 productRoute.use('/images', express_1.default.static(mediaDIR));
 productRoute.post('/upload-product-image/:productId', authentication_1.checkCredentials, upload.single('image'), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -44,18 +42,22 @@ productRoute.post('/upload-product-image/:productId', authentication_1.checkCred
         });
     }
     else {
+        const productImage = req.file;
+        const profileRef = (0, storage_1.ref)(firebaseConfig_1.default, 'products/' + productImage.originalname);
+        const uploadRef = yield (0, storage_1.uploadBytes)(profileRef, productImage.buffer, { contentType: productImage.mimetype });
+        const url = yield (0, storage_1.getDownloadURL)(uploadRef.ref);
         try {
             yield dataPool.product.update({
                 where: {
                     id: parseInt(req.params.productId),
                 },
                 data: {
-                    image_name: req.file.filename,
+                    image_name: url,
                 },
             });
             return res.status(201).json({
                 success: true,
-                fileName: req.file.filename
+                fileName: url
             });
         }
         catch (err) {

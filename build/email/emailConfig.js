@@ -21,7 +21,7 @@ const mail = nodemailer_1.default.createTransport({
     secure: true,
     auth: {
         user: "nikephoros.ague@gmail.com",
-        pass: "vqpruuorqosjxxjv"
+        pass: "fkxwlzvuzbvvamoi"
     },
 });
 const compile = (first_name, code) => __awaiter(void 0, void 0, void 0, function* () {

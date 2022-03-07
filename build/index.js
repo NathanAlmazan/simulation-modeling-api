@@ -17,7 +17,7 @@ const backupRoute_1 = __importDefault(require("./backup/backupRoute"));
 const backupData_1 = __importDefault(require("./backup/backupData"));
 const statisticsRoute_1 = __importDefault(require("./statistics/statisticsRoute"));
 const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: 'https://inventory-system.vercel.app',
 };
 //initialized express
 const app = (0, express_1.default)();

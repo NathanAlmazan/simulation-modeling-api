@@ -888,7 +888,7 @@ function generateInvoicePDF(orderId) {
             });
             yield browser.close();
             const invoiceRef = (0, storage_1.ref)(firebaseConfig_1.default, `invoices/${fileName}.pdf`);
-            const uploadRef = yield (0, storage_1.uploadBytes)(invoiceRef, invoicePDF);
+            const uploadRef = yield (0, storage_1.uploadBytes)(invoiceRef, invoicePDF, { contentType: 'application/pdf' });
             const url = yield (0, storage_1.getDownloadURL)(uploadRef.ref);
             yield dataPool.order.update({
                 where: {
@@ -937,7 +937,7 @@ function generateReceiptPDF(orderId) {
             });
             yield browser.close();
             const receiptRef = (0, storage_1.ref)(firebaseConfig_1.default, `receipts/${fileName}.pdf`);
-            const uploadRef = yield (0, storage_1.uploadBytes)(receiptRef, receiptPDF);
+            const uploadRef = yield (0, storage_1.uploadBytes)(receiptRef, receiptPDF, { contentType: 'application/pdf' });
             const url = yield (0, storage_1.getDownloadURL)(uploadRef.ref);
             yield dataPool.order.update({
                 where: {

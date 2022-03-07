@@ -950,7 +950,7 @@ export async function generateInvoicePDF(orderId: number) {
         await browser.close();
 
         const invoiceRef = ref(firebaseStorage, `invoices/${fileName}.pdf`);
-        const uploadRef = await uploadBytes(invoiceRef, invoicePDF);
+        const uploadRef = await uploadBytes(invoiceRef, invoicePDF, { contentType: 'application/pdf' });
         const url = await getDownloadURL(uploadRef.ref);
 
 
@@ -1002,7 +1002,7 @@ export async function generateReceiptPDF(orderId: number) {
         await browser.close();
 
         const receiptRef = ref(firebaseStorage, `receipts/${fileName}.pdf`);
-        const uploadRef = await uploadBytes(receiptRef, receiptPDF);
+        const uploadRef = await uploadBytes(receiptRef, receiptPDF, { contentType: 'application/pdf' });
         const url = await getDownloadURL(uploadRef.ref);
 
         await dataPool.order.update({

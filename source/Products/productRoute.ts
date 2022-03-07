@@ -6,24 +6,20 @@ import { checkCredentials } from '../EmployeeAndAccounts/authentication';
 import { RootMutation, RootQuery } from "./rootQueryMutaions";
 import multer from 'multer';
 import path from "path";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import firebaseStorage from "../firebaseConfig";
 
 let productRoute = express.Router();
 const mediaDIR = path.join(__dirname, '..', 'media', 'products');
 const dataPool = new PrismaClient();
 
 //initialize multer
-const multerStorage = multer.diskStorage({ 
-    destination: (req, file, callback) => {
-        callback(null, mediaDIR);
-    },
-    filename: (req, file, callback) => {
-        const currDate = new Date().toISOString();
-        
-        callback(null, req.params.productId + "_" + file.originalname);
+const upload = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+      fileSize: 5 * 1024 * 1024 // no larger than 5mb, you can change as needed.
     }
-})
-
-const upload = multer({ storage: multerStorage });
+});
 
 //use static files 
 productRoute.use('/images', express.static(mediaDIR));
@@ -37,19 +33,24 @@ productRoute.post('/upload-product-image/:productId', checkCredentials, upload.s
         });
     } else {
 
+        const productImage = req.file;
+        const profileRef = ref(firebaseStorage, 'products/' + productImage.originalname);
+        const uploadRef = await uploadBytes(profileRef, productImage.buffer, { contentType: productImage.mimetype });
+        const url = await getDownloadURL(uploadRef.ref);
+
         try { 
             await dataPool.product.update({
                 where: {
                     id: parseInt(req.params.productId),
                 },
                 data: {
-                    image_name: req.file.filename,
+                    image_name: url,
                 },
             });
 
             return res.status(201).json({
                 success: true, 
-                fileName: req.file.filename
+                fileName: url
             });
             
         } catch (err) {

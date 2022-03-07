@@ -119,7 +119,7 @@ authRoute.post('/upload/profile/:employeeId', checkCredentials, upload.single('i
         try { 
             const profileImage = req.file;
             const profileRef = ref(firebaseStorage, 'profiles/' + profileImage.originalname);
-            const uploadRef = await uploadBytes(profileRef, profileImage.buffer);
+            const uploadRef = await uploadBytes(profileRef, profileImage.buffer, { contentType: profileImage.mimetype });
             const url = await getDownloadURL(uploadRef.ref);
 
             await dataPool.employee.update({
