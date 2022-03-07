@@ -14,7 +14,7 @@ import CreateBackup from './backup/backupData';
 import statisticsRoute from './statistics/statisticsRoute';
 
 const corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: 'https://inventory-system.vercel.app',
 }
 
 //initialized express
