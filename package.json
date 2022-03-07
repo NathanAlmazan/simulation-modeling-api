@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node ./build/index.js",
-    "build": "tsc -p .",
+    "heroku-postbuild": "npx prisma generate",
     "dev": "nodemon ./source/index.ts"
   },
   "author": "Nathanael Almazan",
