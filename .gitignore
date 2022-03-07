@@ -1,0 +1,4 @@
+node_modules
+media
+# Keep environment variables out of version control
+.env

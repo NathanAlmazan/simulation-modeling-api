@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Order" ALTER COLUMN "order_date" DROP DEFAULT;
+
+-- AlterTable
+ALTER TABLE "Sales" ALTER COLUMN "date_paid" SET DEFAULT CURRENT_TIMESTAMP;
