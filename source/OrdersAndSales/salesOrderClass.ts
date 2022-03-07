@@ -72,7 +72,7 @@ export class SalesOrder {
             const currProduct = orderProducts[i];
             if (!currProduct.id || !currProduct.quantity || currProduct.quantity == 0) return { status: false, message: `Item ${i + 1}: Invalid Object.` };
             try {
-                const productInfo = await dataPool.product.findUnique({
+                const productInfo = await dataPool.product.findFirst({
                     where: {
                         id: currProduct.id
                     },
