@@ -67,7 +67,7 @@ const Schema = new GraphQLSchema({
     query: RootQuery
 })
 
-productRoute.use('/graphql', checkCredentials, graphqlHTTP(req => ({ 
+productRoute.use('/graphql', graphqlHTTP(req => ({ 
     schema: Schema,
     context: (req as express.Request).user,
     graphql: false

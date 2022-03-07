@@ -171,7 +171,7 @@ purchaseRoute.post('/upload/receipt/:purchaseId', checkCredentials, upload.singl
     }
 });
 
-purchaseRoute.use('/graphql', checkCredentials, graphqlHTTP(req => ({ 
+purchaseRoute.use('/graphql', graphqlHTTP(req => ({ 
     schema: Schema,
     context: (req as express.Request).user,
     graphql: false

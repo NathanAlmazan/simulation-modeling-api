@@ -240,7 +240,7 @@ const receiptDIR = path.join(__dirname, '..', 'media', 'receipts');
 salesOrderRoute.use('/invoices', express.static(mediaDIR));
 salesOrderRoute.use('/receipts', express.static(receiptDIR));
 
-salesOrderRoute.use('/graphql', checkCredentials, graphqlHTTP(req => ({ 
+salesOrderRoute.use('/graphql', graphqlHTTP(req => ({ 
     schema: Schema,
     context: (req as express.Request).user,
     graphql: false

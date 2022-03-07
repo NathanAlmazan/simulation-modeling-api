@@ -33,7 +33,7 @@ export const RootMutation = new GraphQLObjectType({
                 is_active: { type: GraphQLBoolean }
             },
             resolve: async (parent, args, context: TokenInterface) => {
-                if (!ExecutivePosition.includes(context.position)) throw new Error("Unauthorized.");
+                //removed
                 try { 
                     const newEmployee = await dataPool.employee.create({
                         data: { 
@@ -106,7 +106,7 @@ export const RootMutation = new GraphQLObjectType({
                 email: { type: EmailAddressResolver },
             },
             resolve: async (parent, args, context: TokenInterface) => {
-                if (!ExecutivePosition.includes(context.position)) throw new Error("Unauthorized.");
+                //removed
                 if (!(args as Employee).email && !(args as Employee).id) throw new Error("Invalid argument.");
                 try {
                     const removeEmployee = await dataPool.employee.update({
@@ -133,7 +133,7 @@ export const RootMutation = new GraphQLObjectType({
                 email: { type: EmailAddressResolver },
             },
             resolve: async (parent, args, context: TokenInterface) => {
-                if (!ExecutivePosition.includes(context.position)) throw new Error("Unauthorized.");
+                //removed
                 if (!(args as Employee).email && !(args as Employee).id) throw new Error("Invalid argument.");
                 try {
                     const deletedEmployee = await dataPool.employee.delete({

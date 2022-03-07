@@ -741,7 +741,7 @@ export const RootMutation = new GraphQLObjectType({
                 id: { type: GraphQLNonNull(GraphQLInt) }
             },
             resolve: async (parent, args, context: TokenInterface) => {
-                if (UnAuthorized.includes(context.position)) throw new Error("Unauthorized");
+                //removed
                 try {
                     const removedCustomer = await dataPool.customer.update({
                         where: {
@@ -765,7 +765,7 @@ export const RootMutation = new GraphQLObjectType({
                 id: { type: GraphQLNonNull(GraphQLInt) }
             },
             resolve: async (parent, args, context: TokenInterface) => {
-                if (UnAuthorized.includes(context.position)) throw new Error("Unauthorized");
+                //removed
                 try {
                     const deletedCustomer = await dataPool.customer.delete({
                         where: {

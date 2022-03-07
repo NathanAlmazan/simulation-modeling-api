@@ -448,7 +448,7 @@ const Schema = new GraphQLSchema({
     mutation: RootMutation
 });
 
-authRoute.use('/graphql', checkCredentials, graphqlHTTP(req => ({ 
+authRoute.use('/graphql', graphqlHTTP(req => ({ 
     schema: Schema,
     context: (req as express.Request).user,
     graphql: false

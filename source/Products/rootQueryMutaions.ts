@@ -39,7 +39,6 @@ export const RootMutation = new GraphQLObjectType({
                 price: { type: GraphQLNonNull(GraphQLFloat) }
             },
             resolve: async (parent, args, context: TokenInterface) => {
-                if (UnAuthorized.includes(context.position)) throw new Error("Unauthorized");
                 try { 
                     const newProduct = await dataPool.product.create({
                         data: { 
@@ -71,7 +70,6 @@ export const RootMutation = new GraphQLObjectType({
                 is_active: { type: GraphQLBoolean },
             },
             resolve: async (parent, args, context: TokenInterface) => {
-                if (UnAuthorized.includes(context.position)) throw new Error("Unauthorized");
                 try {
                     const updatedProduct = await dataPool.product.update({
                         where: {
@@ -109,7 +107,6 @@ export const RootMutation = new GraphQLObjectType({
                 id: { type: GraphQLNonNull(GraphQLInt) }
             },
             resolve: async (parent, args, context: TokenInterface) => {
-                if (UnAuthorized.includes(context.position)) throw new Error("Unauthorized");
                 try {
                     const removedProduct = await dataPool.product.update({
                         where: {
@@ -133,7 +130,6 @@ export const RootMutation = new GraphQLObjectType({
                 id: { type: GraphQLNonNull(GraphQLInt) }
             },
             resolve: async (parent, args, context: TokenInterface) => {
-                if (!ExecutivePosition.includes(context.position)) throw new Error("Unauthorized");
                 try {
                     await dataPool.productDetails.deleteMany({
                         where: {
@@ -161,7 +157,6 @@ export const RootMutation = new GraphQLObjectType({
                 description: { type: GraphQLNonNull(GraphQLString) }
             },
             resolve: async (parent, args, context: TokenInterface) => {
-                if (UnAuthorized.includes(context.position)) throw new Error("Unauthorized");
                 try {
                     const newCategory = await dataPool.category.create({
                         data: {
@@ -186,7 +181,6 @@ export const RootMutation = new GraphQLObjectType({
                 description: { type: GraphQLString }
             },
             resolve: async (parent, args, context: TokenInterface) => {
-                if (UnAuthorized.includes(context.position)) throw new Error("Unauthorized");
                 try {
                     const updatedCategory = await dataPool.category.update({
                         where: {
@@ -211,7 +205,6 @@ export const RootMutation = new GraphQLObjectType({
                 id: { type: GraphQLNonNull(GraphQLInt) }
             },
             resolve: async (parent, args, context: TokenInterface) => {
-                if (UnAuthorized.includes(context.position)) throw new Error("Unauthorized");
                 try {
                     const countCategoryProd = await dataPool.product.count({
                         where: {
@@ -243,7 +236,6 @@ export const RootMutation = new GraphQLObjectType({
                 text_value: { type: GraphQLString },
             },
             resolve: async (parent, args, context: TokenInterface) => {
-                if (UnAuthorized.includes(context.position)) throw new Error("Unauthorized");
                 if (args.num_value && args.unit) {
                     try {
                         const newProductDetail = await dataPool.productDetails.create({
@@ -289,7 +281,7 @@ export const RootMutation = new GraphQLObjectType({
                 text_value: { type: GraphQLString },
             },
             resolve: async (parent, args, context: TokenInterface) => {
-                if (UnAuthorized.includes(context.position)) throw new Error("Unauthorized");
+                //removed
                 try {
                     const updatedDetail = await dataPool.productDetails.update({
                         where: { 
@@ -316,7 +308,7 @@ export const RootMutation = new GraphQLObjectType({
                 id: { type: GraphQLNonNull(GraphQLInt) },
             },
             resolve: async (parent, args, context: TokenInterface) => {
-                if (UnAuthorized.includes(context.position)) throw new Error("Unauthorized");
+                //removed
                 try {   
                     const deletedProdDetail = await dataPool.productDetails.delete({
                         where: { id: (args as ProductDetails).id }
