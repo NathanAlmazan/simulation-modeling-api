@@ -235,16 +235,10 @@ salesOrderRoute.get('/get-receipt/:orderId', checkCredentials, async (req, res) 
     return res.status(201).json({ data: response.message });
 });
 
-const mediaDIR = path.join(__dirname, '..', 'media', 'invoices');
-const receiptDIR = path.join(__dirname, '..', 'media', 'receipts');
-salesOrderRoute.use('/invoices', express.static(mediaDIR));
-salesOrderRoute.use('/receipts', express.static(receiptDIR));
-
-salesOrderRoute.use('/graphql', graphqlHTTP(req => ({ 
+salesOrderRoute.use('/graphql', graphqlHTTP({
     schema: Schema,
-    context: (req as express.Request).user,
-    graphql: false
-})));
+    graphiql: false
+}));
 
 export default salesOrderRoute;
 
