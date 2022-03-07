@@ -1,17 +1,16 @@
 import express from "express";
 import { graphqlHTTP } from "express-graphql";
 import { GraphQLSchema } from "graphql";
-import { PrismaClient } from '@prisma/client';
 import { checkCredentials } from '../EmployeeAndAccounts/authentication';
 import { RootMutation, RootQuery } from "./rootQueryMutaions";
 import multer from 'multer';
 import path from "path";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import firebaseStorage from "../firebaseConfig";
+import dataPool from "../prismaConfig";
 
 let productRoute = express.Router();
 const mediaDIR = path.join(__dirname, '..', 'media', 'products');
-const dataPool = new PrismaClient();
 
 //initialize multer
 const upload = multer({

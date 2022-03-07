@@ -1,9 +1,6 @@
-import { PrismaClient } from "@prisma/client";
 import { GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLList, GraphQLObjectType, GraphQLString } from "graphql";
 import { DateTimeResolver } from "graphql-scalars";
-import { ExecutivePosition } from "../EmployeeAndAccounts/graphqlObjects";
-
-const dataPool = new PrismaClient();
+import dataPool from "../prismaConfig";
 
 export const StatusReport: GraphQLObjectType = new GraphQLObjectType({
     name: "StatusReport",

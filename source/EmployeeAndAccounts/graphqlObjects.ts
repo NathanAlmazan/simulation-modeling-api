@@ -1,10 +1,9 @@
 import { GraphQLBoolean, GraphQLEnumType, GraphQLFloat, GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from 'graphql';
 import { DateTimeResolver, EmailAddressResolver } from 'graphql-scalars';
-import { PrismaClient, Account, Employee } from '@prisma/client';
+import { Account, Employee } from '@prisma/client';
 import { OrderObject } from '../OrdersAndSales/graphqlObjects';
 import { PurchaseObject } from '../PurchasedAndPayables/graphqlObjects';
-
-const dataPool = new PrismaClient();    //database pool
+import dataPool from '../prismaConfig';
 
 export const PositionEnumType = new GraphQLEnumType({
     name: "PositionTypes",

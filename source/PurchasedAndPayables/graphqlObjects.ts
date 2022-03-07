@@ -1,10 +1,9 @@
-import { Purchase, Supplier, PrismaClient, PurcahseWithProduct, Payables } from "@prisma/client";
+import { Purchase, Supplier, PurcahseWithProduct, Payables } from "@prisma/client";
 import { GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql";
 import { DateTimeResolver, EmailAddressResolver } from "graphql-scalars";
 import { AccountObject } from "../EmployeeAndAccounts/graphqlObjects";
+import dataPool from "../prismaConfig";
 import { ProductObject } from "../Products/graphqlObjects";
-
-const dataPool = new PrismaClient();
 
 export const SupplierObject: GraphQLObjectType = new GraphQLObjectType({
     name: 'Supplieers',

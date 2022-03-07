@@ -1,11 +1,8 @@
 import { GraphQLBoolean, GraphQLEnumType, GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql";
 import { CustomerObject, OrderObject, SalesObject, TransactionObject } from "./graphqlObjects";
-import { Customer, Order, prisma, PrismaClient } from '@prisma/client';
+import { Customer, Order } from '@prisma/client';
 import { DateTimeResolver, EmailAddressResolver } from "graphql-scalars";
-
-const dataPool = new PrismaClient();    //database pool
-
-const UnAuthorized = ["Warehouse Staff", "Delivery Personnel", "Sales Agent"];
+import dataPool from "../prismaConfig";
 
 interface TokenInterface {
     userId: number;

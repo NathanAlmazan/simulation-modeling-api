@@ -1,12 +1,9 @@
 import { GraphQLBoolean, GraphQLFloat, GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql";
 import { CategoryObject, ProductDetailsObject, ProductObject } from "./graphqlObjects";
 import { JSONObjectResolver } from 'graphql-scalars';
-import { Category, PrismaClient, Product, ProductDetails } from '@prisma/client';
+import { Category, Product, ProductDetails } from '@prisma/client';
 import { Decimal } from "@prisma/client/runtime";
-
-const dataPool = new PrismaClient(); 
-const UnAuthorized = ["Warehouse Staff", "Delivery Personnel", "Sales Agent"];
-const ExecutivePosition = ["President", "Vice President", "Manager"];
+import dataPool from "../prismaConfig";
 
 interface TokenInterface {
     userId: number;

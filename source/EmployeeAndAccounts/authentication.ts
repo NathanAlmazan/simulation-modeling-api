@@ -1,6 +1,5 @@
 import express from 'express';
 import dotenv from 'dotenv';
-import { PrismaClient } from '@prisma/client';
 import passport from 'passport';
 import passportLocal from 'passport-local';
 import bcrypt from 'bcryptjs';
@@ -14,10 +13,10 @@ import path from 'path';
 import multer from 'multer';
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import firebaseStorage from '../firebaseConfig';
+import dataPool from '../prismaConfig';
 
 let authRoute = express.Router();   //initialized express router
 dotenv.config();    //initialized environment variables
-const dataPool = new PrismaClient();    //database pool
 
 //setup authentication with passport
 const LocalStrategy = passportLocal.Strategy;

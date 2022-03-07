@@ -1,8 +1,7 @@
-import { GraphQLInt, GraphQLNonNull, GraphQLObjectType, GraphQLString, GraphQLBoolean, GraphQLList, GraphQLFloat, GraphQLScalarType, Kind } from "graphql";
-import { Category, Product, PrismaClient, ProductDetails } from '@prisma/client';
+import { GraphQLInt, GraphQLNonNull, GraphQLObjectType, GraphQLString, GraphQLBoolean, GraphQLList, GraphQLFloat } from "graphql";
+import { Category, Product, ProductDetails } from '@prisma/client';
 import { DateTimeResolver, JSONObjectResolver } from 'graphql-scalars';
-
-const dataPool = new PrismaClient();    //database pool
+import dataPool from "../prismaConfig";
 
 interface SuggestedDetails {
     detailType: string;

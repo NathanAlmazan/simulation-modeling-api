@@ -1,9 +1,8 @@
 import { GraphQLEnumType, GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql";
 import { PayablesObject, PurchaseObject, SupplierObject } from "./graphqlObjects";
-import { PrismaClient, Purchase, Supplier } from "@prisma/client";
+import { Purchase } from "@prisma/client";
 import { DateTimeResolver } from "graphql-scalars";
-
-const dataPool = new PrismaClient();
+import dataPool from "../prismaConfig";
 
 const DateRangeEnum = new GraphQLEnumType({
     name: "DateRanges",

@@ -1,10 +1,9 @@
-import { Customer, Order, PrismaClient, Sales, Transaction } from "@prisma/client";
+import { Customer, Order, Sales, Transaction } from "@prisma/client";
 import { GraphQLBoolean, GraphQLEnumType, GraphQLFloat, GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql";
 import { DateTimeResolver, EmailAddressResolver } from "graphql-scalars";
 import { AccountObject, EmployeeObject } from "../EmployeeAndAccounts/graphqlObjects";
+import dataPool from "../prismaConfig";
 import { ProductObject } from "../Products/graphqlObjects";
-
-const dataPool = new PrismaClient();
 
 export const PaymentTypeEnum = new GraphQLEnumType({
     name: "PaymentTypes",

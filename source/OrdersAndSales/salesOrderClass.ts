@@ -1,12 +1,10 @@
-import { PrismaClient } from "@prisma/client";
 import path from "path";
 import fs from "fs";
 import * as hbs from "handlebars";
 import puppeteer from "puppeteer";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import firebaseStorage from "../firebaseConfig";
-
-const dataPool = new PrismaClient();
+import dataPool from "../prismaConfig";
 
 export interface OrderProducts {
     id: number,

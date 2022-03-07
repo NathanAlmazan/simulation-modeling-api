@@ -1,6 +1,5 @@
-import { PrismaClient } from '@prisma/client';
+import dataPool from "../prismaConfig";
 
-const dataPool = new PrismaClient();    //database pool
 
 export interface PurchaseArgs {
     invoice_id: string | null,

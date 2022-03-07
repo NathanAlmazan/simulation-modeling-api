@@ -40,10 +40,6 @@ app.use('/backup', backupRoute);
 //statistics
 app.use('/statistics', statisticsRoute);
 
-schedule.scheduleJob('0 14 * * *', () => {
-    CreateBackup();
-});
-
 //express listen
 app.listen(port, () => {
     console.log("Listening on port ",  port);

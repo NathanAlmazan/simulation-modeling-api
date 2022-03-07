@@ -1,9 +1,8 @@
 import { GraphQLBoolean, GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql";
 import { EmailAddressResolver } from "../../node_modules/graphql-scalars";
-import { PrismaClient, Employee, Locations } from '@prisma/client';
+import { Employee, Locations } from '@prisma/client';
 import { EmployeeObject, PositionEnumType, ExecutivePosition, LocationObject } from './graphqlObjects';
-
-const dataPool = new PrismaClient();    //database pool
+import dataPool from "../prismaConfig";
 
 interface TokenInterface {
     userId: number;

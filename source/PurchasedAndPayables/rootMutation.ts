@@ -1,9 +1,7 @@
 import { GraphQLBoolean, GraphQLInt, GraphQLNonNull, GraphQLObjectType, GraphQLString } from "graphql";
 import { EmailAddressResolver } from "graphql-scalars";
+import dataPool from "../prismaConfig";
 import { SupplierObject } from "./graphqlObjects";
-import { PrismaClient } from "@prisma/client";
-
-const dataPool = new PrismaClient();
 
 export interface SupplierArgs {
     id: number;
