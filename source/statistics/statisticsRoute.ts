@@ -10,7 +10,7 @@ const Schema = new GraphQLSchema({
     query: StatusReport
 });
 
-statisticsRoute.use('/graphql', graphqlHTTP(req => ({ 
+statisticsRoute.use('/graphql', checkCredentials, graphqlHTTP(req => ({ 
     schema: Schema,
     context: (req as express.Request).user,
     graphql: false
