@@ -203,7 +203,7 @@ export class PurchaseOrders {
                 },
                 data: {
                     supplier_id: this.purchaseData.supplier_id,
-                    account_id: this.purchaseData.account_id,
+                    account_id: 1,
                     invoice_id: this.purchaseData.invoice_id,
                     total_amount: finalAmount,
                     payment_type: this.purchaseData.payment_type,
@@ -453,7 +453,7 @@ export async function addPayment(purchaseId: number, accountId: number, payment:
         const addedTransaction = await dataPool.payables.create({
             data: {
                 purchase_id: purchaseId,
-                account_id: accountId,
+                account_id: 2,
                 amount_paid: payment,
                 payment_date: new Date().toISOString()
             }

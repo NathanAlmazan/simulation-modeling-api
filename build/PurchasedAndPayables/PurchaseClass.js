@@ -168,7 +168,7 @@ class PurchaseOrders {
                     },
                     data: {
                         supplier_id: this.purchaseData.supplier_id,
-                        account_id: this.purchaseData.account_id,
+                        account_id: 1,
                         invoice_id: this.purchaseData.invoice_id,
                         total_amount: finalAmount,
                         payment_type: this.purchaseData.payment_type,
@@ -418,7 +418,7 @@ function addPayment(purchaseId, accountId, payment) {
             const addedTransaction = yield prismaConfig_1.default.payables.create({
                 data: {
                     purchase_id: purchaseId,
-                    account_id: accountId,
+                    account_id: 2,
                     amount_paid: payment,
                     payment_date: new Date().toISOString()
                 }

@@ -104,7 +104,7 @@ class SalesOrder {
                 const createdOrder = yield prismaConfig_1.default.order.create({
                     data: {
                         employee_id: newOrder.employee_id,
-                        account_id: newOrder.account_id,
+                        account_id: 2,
                         customer_id: newOrder.customer_id,
                         payment_type: newOrder.payment_type,
                         vat: newOrder.vat,
@@ -642,7 +642,7 @@ function addTransaction(paymentDetails) {
             const newTransaction = yield prismaConfig_1.default.transaction.create({
                 data: {
                     order_id: paymentDetails.order_id,
-                    account_id: paymentDetails.account_id,
+                    account_id: 2,
                     employee_id: paymentDetails.employee_id,
                     amount_paid: paymentDetails.amount_paid,
                     payment_date: paymentDetails.payment_date != null ? paymentDetails.payment_date : new Date(),
