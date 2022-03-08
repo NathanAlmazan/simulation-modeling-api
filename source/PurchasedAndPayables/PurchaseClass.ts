@@ -96,7 +96,7 @@ export class PurchaseOrders {
                 data: {
                     supplier_id: this.purchaseData.supplier_id,
                     invoice_id: this.purchaseData.invoice_id,
-                    account_id: this.purchaseData.account_id,
+                    account_id: 1,
                     total_amount: finalAmount,
                     payment_type: this.purchaseData.payment_type,
                     purchase_date: purchaseDate,
