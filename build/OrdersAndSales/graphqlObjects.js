@@ -8,14 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.TransactionObject = exports.SalesObject = exports.CustomerObject = exports.OrderObject = exports.OrderWithProducts = exports.PaymentTypeEnum = void 0;
-const client_1 = require("@prisma/client");
 const graphql_1 = require("graphql");
 const graphql_scalars_1 = require("graphql-scalars");
 const graphqlObjects_1 = require("../EmployeeAndAccounts/graphqlObjects");
+const prismaConfig_1 = __importDefault(require("../prismaConfig"));
 const graphqlObjects_2 = require("../Products/graphqlObjects");
-const dataPool = new client_1.PrismaClient();
 exports.PaymentTypeEnum = new graphql_1.GraphQLEnumType({
     name: "PaymentTypes",
     description: "Different payment method the company accepts",
@@ -48,7 +50,7 @@ exports.OrderObject = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLNonNull)(graphqlObjects_1.EmployeeObject),
             resolve: (order) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const employee = yield dataPool.employee.findUnique({
+                    const employee = yield prismaConfig_1.default.employee.findUnique({
                         where: {
                             id: order.employee_id
                         }
@@ -64,7 +66,7 @@ exports.OrderObject = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLNonNull)(graphqlObjects_1.AccountObject),
             resolve: (order) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const account = yield dataPool.account.findUnique({
+                    const account = yield prismaConfig_1.default.account.findUnique({
                         where: {
                             id: order.account_id
                         }
@@ -80,7 +82,7 @@ exports.OrderObject = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLNonNull)(exports.CustomerObject),
             resolve: (order) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const customer = yield dataPool.customer.findUnique({
+                    const customer = yield prismaConfig_1.default.customer.findUnique({
                         where: {
                             id: order.customer_id
                         }
@@ -96,7 +98,7 @@ exports.OrderObject = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLList)(exports.OrderWithProducts),
             resolve: (order) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const orderProducts = yield dataPool.orderWithProduct.findMany({
+                    const orderProducts = yield prismaConfig_1.default.orderWithProduct.findMany({
                         where: {
                             order_id: order.id
                         },
@@ -126,7 +128,7 @@ exports.OrderObject = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLBoolean,
             resolve: (order) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const sold = yield dataPool.sales.findUnique({
+                    const sold = yield prismaConfig_1.default.sales.findUnique({
                         where: {
                             order_id: order.id
                         }
@@ -142,7 +144,7 @@ exports.OrderObject = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLList)(exports.TransactionObject),
             resolve: (order) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const orderTransaction = yield dataPool.transaction.findMany({
+                    const orderTransaction = yield prismaConfig_1.default.transaction.findMany({
                         where: {
                             order_id: order.id,
                         },
@@ -176,7 +178,7 @@ exports.OrderObject = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLFloat,
             resolve: (order) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const paymentHistory = yield dataPool.transaction.findMany({
+                    const paymentHistory = yield prismaConfig_1.default.transaction.findMany({
                         where: {
                             order_id: order.id
                         },
@@ -222,7 +224,7 @@ exports.CustomerObject = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLInt,
             resolve: (customer) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const totalOrders = yield dataPool.order.aggregate({
+                    const totalOrders = yield prismaConfig_1.default.order.aggregate({
                         _count: {
                             id: true
                         },
@@ -245,7 +247,7 @@ exports.CustomerObject = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLInt,
             resolve: (customer, args) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const totalBought = yield dataPool.sales.aggregate({
+                    const totalBought = yield prismaConfig_1.default.sales.aggregate({
                         _count: {
                             id: true
                         },
@@ -273,7 +275,7 @@ exports.CustomerObject = new graphql_1.GraphQLObjectType({
                     const startDate = new Date(currYear, 0, 1);
                     const endDate = new Date((currYear + 1), 0, 1);
                     try {
-                        const orderList = yield dataPool.order.findMany({
+                        const orderList = yield prismaConfig_1.default.order.findMany({
                             where: {
                                 AND: {
                                     customer_id: customer.id,
@@ -295,7 +297,7 @@ exports.CustomerObject = new graphql_1.GraphQLObjectType({
                     const startDate = new Date(currYear, 0, 1);
                     const endDate = new Date((currYear + 1), 0, 1);
                     try {
-                        const orderList = yield dataPool.order.findMany({
+                        const orderList = yield prismaConfig_1.default.order.findMany({
                             where: {
                                 AND: {
                                     customer_id: customer.id,
@@ -326,7 +328,7 @@ exports.SalesObject = new graphql_1.GraphQLObjectType({
             type: exports.OrderObject,
             resolve: (sales) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const salesOrder = yield dataPool.order.findUnique({
+                    const salesOrder = yield prismaConfig_1.default.order.findUnique({
                         where: {
                             id: sales.id
                         }
@@ -349,7 +351,7 @@ exports.TransactionObject = new graphql_1.GraphQLObjectType({
             type: graphqlObjects_1.EmployeeObject,
             resolve: (transaction) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const employee = yield dataPool.employee.findUnique({
+                    const employee = yield prismaConfig_1.default.employee.findUnique({
                         where: {
                             id: transaction.employee_id
                         },
@@ -365,7 +367,7 @@ exports.TransactionObject = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLNonNull)(graphqlObjects_1.AccountObject),
             resolve: (transaction) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const account = yield dataPool.account.findUnique({
+                    const account = yield prismaConfig_1.default.account.findUnique({
                         where: {
                             id: transaction.account_id
                         }
@@ -381,7 +383,7 @@ exports.TransactionObject = new graphql_1.GraphQLObjectType({
             type: exports.OrderObject,
             resolve: (transaction) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const salesOrder = yield dataPool.order.findUnique({
+                    const salesOrder = yield prismaConfig_1.default.order.findUnique({
                         where: {
                             id: transaction.order_id
                         }

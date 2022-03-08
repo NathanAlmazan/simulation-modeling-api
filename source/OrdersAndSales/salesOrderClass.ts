@@ -101,8 +101,6 @@ export class SalesOrder {
                     productId: productInfo.id,
                     newStocks: stocksLeft
                 });
-
-                await dataPool.$disconnect();
                 
             } catch (err) {
                 return { status: false, message: `Item ${i + 1}: ${(err as Error).message}.` };
@@ -149,7 +147,6 @@ export class SalesOrder {
                 });
             }
 
-            
             return { status: true, data: createdOrder };
         } catch (err) {
             return { status: false, message: (err as Error).message };

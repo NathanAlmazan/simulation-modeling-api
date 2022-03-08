@@ -15,16 +15,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const express_graphql_1 = require("express-graphql");
 const graphql_1 = require("graphql");
-const client_1 = require("@prisma/client");
 const authentication_1 = require("../EmployeeAndAccounts/authentication");
 const rootQueryMutaions_1 = require("./rootQueryMutaions");
 const multer_1 = __importDefault(require("multer"));
 const path_1 = __importDefault(require("path"));
 const storage_1 = require("firebase/storage");
 const firebaseConfig_1 = __importDefault(require("../firebaseConfig"));
+const prismaConfig_1 = __importDefault(require("../prismaConfig"));
 let productRoute = express_1.default.Router();
 const mediaDIR = path_1.default.join(__dirname, '..', 'media', 'products');
-const dataPool = new client_1.PrismaClient();
 //initialize multer
 const upload = (0, multer_1.default)({
     storage: multer_1.default.memoryStorage(),
@@ -47,7 +46,7 @@ productRoute.post('/upload-product-image/:productId', authentication_1.checkCred
         const uploadRef = yield (0, storage_1.uploadBytes)(profileRef, productImage.buffer, { contentType: productImage.mimetype });
         const url = yield (0, storage_1.getDownloadURL)(uploadRef.ref);
         try {
-            yield dataPool.product.update({
+            yield prismaConfig_1.default.product.update({
                 where: {
                     id: parseInt(req.params.productId),
                 },
@@ -72,7 +71,7 @@ const Schema = new graphql_1.GraphQLSchema({
     mutation: rootQueryMutaions_1.RootMutation,
     query: rootQueryMutaions_1.RootQuery
 });
-productRoute.use('/graphql', authentication_1.checkCredentials, (0, express_graphql_1.graphqlHTTP)(req => ({
+productRoute.use('/graphql', (0, express_graphql_1.graphqlHTTP)(req => ({
     schema: Schema,
     context: req.user,
     graphql: false

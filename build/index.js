@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const node_schedule_1 = __importDefault(require("node-schedule"));
 //routes
 const authentication_1 = __importDefault(require("./EmployeeAndAccounts/authentication"));
 const productRoute_1 = __importDefault(require("./Products/productRoute"));
@@ -14,7 +13,6 @@ const salesOrderRoute_1 = __importDefault(require("./OrdersAndSales/salesOrderRo
 const cors_1 = __importDefault(require("cors"));
 const purchaseRoute_1 = __importDefault(require("./PurchasedAndPayables/purchaseRoute"));
 const backupRoute_1 = __importDefault(require("./backup/backupRoute"));
-const backupData_1 = __importDefault(require("./backup/backupData"));
 const statisticsRoute_1 = __importDefault(require("./statistics/statisticsRoute"));
 const corsOptions = {
     origin: 'https://inventory-system.vercel.app',
@@ -39,9 +37,6 @@ app.use('/payables', purchaseRoute_1.default);
 app.use('/backup', backupRoute_1.default);
 //statistics
 app.use('/statistics', statisticsRoute_1.default);
-node_schedule_1.default.scheduleJob('0 14 * * *', () => {
-    (0, backupData_1.default)();
-});
 //express listen
 app.listen(port, () => {
     console.log("Listening on port ", port);

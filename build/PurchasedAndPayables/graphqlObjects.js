@@ -8,14 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PayablesObject = exports.PurcahseWithProductObject = exports.PurchaseObject = exports.SupplierObject = void 0;
-const client_1 = require("@prisma/client");
 const graphql_1 = require("graphql");
 const graphql_scalars_1 = require("graphql-scalars");
 const graphqlObjects_1 = require("../EmployeeAndAccounts/graphqlObjects");
+const prismaConfig_1 = __importDefault(require("../prismaConfig"));
 const graphqlObjects_2 = require("../Products/graphqlObjects");
-const dataPool = new client_1.PrismaClient();
 exports.SupplierObject = new graphql_1.GraphQLObjectType({
     name: 'Supplieers',
     description: 'Suppliers that supply products',
@@ -48,7 +50,7 @@ exports.SupplierObject = new graphql_1.GraphQLObjectType({
                         const currYear = new Date().getFullYear();
                         const startDate = new Date(currYear, 0, 1);
                         const endDate = new Date((currYear + 1), 0, 1);
-                        const suppOrders = yield dataPool.purchase.findMany({
+                        const suppOrders = yield prismaConfig_1.default.purchase.findMany({
                             where: {
                                 supplier_id: supplier.id,
                                 purchase_date: {
@@ -68,7 +70,7 @@ exports.SupplierObject = new graphql_1.GraphQLObjectType({
                         const currYear = new Date(args.date).getFullYear();
                         const startDate = new Date(currYear, 0, 1);
                         const endDate = new Date((currYear + 1), 0, 1);
-                        const suppOrders = yield dataPool.purchase.findMany({
+                        const suppOrders = yield prismaConfig_1.default.purchase.findMany({
                             where: {
                                 supplier_id: supplier.id,
                                 purchase_date: {
@@ -89,7 +91,7 @@ exports.SupplierObject = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLInt,
             resolve: (supplier) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const totalCollect = yield dataPool.purchase.aggregate({
+                    const totalCollect = yield prismaConfig_1.default.purchase.aggregate({
                         where: {
                             AND: {
                                 supplier_id: supplier.id,
@@ -111,7 +113,7 @@ exports.SupplierObject = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLInt,
             resolve: (supplier) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const totalSupplied = yield dataPool.purchase.aggregate({
+                    const totalSupplied = yield prismaConfig_1.default.purchase.aggregate({
                         where: {
                             AND: {
                                 supplier_id: supplier.id,
@@ -140,7 +142,7 @@ exports.PurchaseObject = new graphql_1.GraphQLObjectType({
             type: exports.SupplierObject,
             resolve: (purchase) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const purchSupplier = yield dataPool.supplier.findUnique({
+                    const purchSupplier = yield prismaConfig_1.default.supplier.findUnique({
                         where: {
                             id: purchase.supplier_id
                         }
@@ -156,7 +158,7 @@ exports.PurchaseObject = new graphql_1.GraphQLObjectType({
             type: graphqlObjects_1.AccountObject,
             resolve: (purchase) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const account = yield dataPool.account.findUnique({
+                    const account = yield prismaConfig_1.default.account.findUnique({
                         where: {
                             id: purchase.account_id
                         }
@@ -183,7 +185,7 @@ exports.PurchaseObject = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLList)(exports.PurcahseWithProductObject),
             resolve: (purchase) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const purchased = yield dataPool.purcahseWithProduct.findMany({
+                    const purchased = yield prismaConfig_1.default.purcahseWithProduct.findMany({
                         where: {
                             purchase_id: purchase.id
                         }
@@ -199,7 +201,7 @@ exports.PurchaseObject = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLList)(exports.PayablesObject),
             resolve: (purchase) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const payments = yield dataPool.payables.findMany({
+                    const payments = yield prismaConfig_1.default.payables.findMany({
                         where: {
                             purchase_id: purchase.id
                         }
@@ -215,7 +217,7 @@ exports.PurchaseObject = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLFloat,
             resolve: (purchase) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const totalPaid = yield dataPool.payables.aggregate({
+                    const totalPaid = yield prismaConfig_1.default.payables.aggregate({
                         where: {
                             purchase_id: purchase.id
                         },
@@ -266,7 +268,7 @@ exports.PurchaseObject = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLFloat,
             resolve: (purchase) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const totalPaid = yield dataPool.payables.aggregate({
+                    const totalPaid = yield prismaConfig_1.default.payables.aggregate({
                         where: {
                             purchase_id: purchase.id
                         },
@@ -296,7 +298,7 @@ exports.PurcahseWithProductObject = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLNonNull)(graphqlObjects_2.ProductObject),
             resolve: (productPurchased) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const product = yield dataPool.product.findUnique({
+                    const product = yield prismaConfig_1.default.product.findUnique({
                         where: {
                             id: productPurchased.product_id
                         }
@@ -312,7 +314,7 @@ exports.PurcahseWithProductObject = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLNonNull)(exports.PurchaseObject),
             resolve: (productPurchased) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const purchase = yield dataPool.purchase.findUnique({
+                    const purchase = yield prismaConfig_1.default.purchase.findUnique({
                         where: {
                             id: productPurchased.purchase_id
                         }
@@ -337,7 +339,7 @@ exports.PayablesObject = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLNonNull)(exports.PurchaseObject),
             resolve: (payables) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const purchase = yield dataPool.purchase.findUnique({
+                    const purchase = yield prismaConfig_1.default.purchase.findUnique({
                         where: {
                             id: payables.purchase_id
                         }
@@ -353,7 +355,7 @@ exports.PayablesObject = new graphql_1.GraphQLObjectType({
             type: graphqlObjects_1.AccountObject,
             resolve: (payables) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const account = yield dataPool.account.findUnique({
+                    const account = yield prismaConfig_1.default.account.findUnique({
                         where: {
                             id: payables.account_id
                         }

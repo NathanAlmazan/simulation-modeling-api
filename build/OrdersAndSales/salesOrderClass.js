@@ -32,14 +32,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.setDelivered = exports.getReceiptPDF = exports.getInvoicePDF = exports.generateReceiptPDF = exports.generateInvoicePDF = exports.updateTransaction = exports.addTransaction = exports.deleteOrder = exports.restoreOrder = exports.returnOrder = exports.holdOrder = exports.SalesOrder = void 0;
-const client_1 = require("@prisma/client");
 const path_1 = __importDefault(require("path"));
 const fs_1 = __importDefault(require("fs"));
 const hbs = __importStar(require("handlebars"));
 const puppeteer_1 = __importDefault(require("puppeteer"));
 const storage_1 = require("firebase/storage");
 const firebaseConfig_1 = __importDefault(require("../firebaseConfig"));
-const dataPool = new client_1.PrismaClient();
+const prismaConfig_1 = __importDefault(require("../prismaConfig"));
 class SalesOrder {
     constructor() {
         this.total_price = 0;
@@ -61,7 +60,7 @@ class SalesOrder {
                 if (!currProduct.id || !currProduct.quantity || currProduct.quantity == 0)
                     return { status: false, message: `Item ${i + 1}: Invalid Object.` };
                 try {
-                    const productInfo = yield dataPool.product.findUnique({
+                    const productInfo = yield prismaConfig_1.default.product.findFirst({
                         where: {
                             id: currProduct.id
                         },
@@ -102,7 +101,7 @@ class SalesOrder {
             indexedDate.setDate(indexedDate.getDate() + paymentTerms);
             const amountDue = newOrder.discount != null ? this.total_price - newOrder.discount : this.total_price;
             try {
-                const createdOrder = yield dataPool.order.create({
+                const createdOrder = yield prismaConfig_1.default.order.create({
                     data: {
                         employee_id: newOrder.employee_id,
                         account_id: newOrder.account_id,
@@ -123,7 +122,7 @@ class SalesOrder {
                     }
                 });
                 for (var x = 0; x < this.newProductStocks.length; x++) {
-                    yield dataPool.product.update({
+                    yield prismaConfig_1.default.product.update({
                         where: {
                             id: this.newProductStocks[x].productId,
                         },
@@ -145,7 +144,7 @@ class SalesOrder {
             if (orderProducts.length === 0)
                 return { status: false, message: "This order have no product." };
             try {
-                const currOrder = yield dataPool.order.findUnique({
+                const currOrder = yield prismaConfig_1.default.order.findUnique({
                     where: {
                         id: orderId,
                     },
@@ -160,7 +159,7 @@ class SalesOrder {
                     const currProduct = orderProducts[i];
                     if (!currProduct.id || !currProduct.quantity || currProduct.quantity == 0)
                         return { status: false, message: `Item ${i + 1}: Invalid Object.` };
-                    const productInfo = yield dataPool.product.findUnique({
+                    const productInfo = yield prismaConfig_1.default.product.findUnique({
                         where: {
                             id: currProduct.id
                         },
@@ -194,7 +193,7 @@ class SalesOrder {
                 const newTotalPrice = parseFloat(currOrder.total_price.toFixed(2)) + this.total_price;
                 const orderDiscount = currOrder.discount != null ? parseFloat((_a = currOrder.discount) === null || _a === void 0 ? void 0 : _a.toFixed(2)) : 0;
                 const amountDue = currOrder.discount != null ? newTotalPrice - orderDiscount : newTotalPrice;
-                const updateOrder = yield dataPool.order.update({
+                const updateOrder = yield prismaConfig_1.default.order.update({
                     where: {
                         id: orderId
                     },
@@ -210,7 +209,7 @@ class SalesOrder {
                     }
                 });
                 for (var x = 0; x < this.newProductStocks.length; x++) {
-                    yield dataPool.product.update({
+                    yield prismaConfig_1.default.product.update({
                         where: {
                             id: this.newProductStocks[x].productId,
                         },
@@ -231,7 +230,7 @@ class SalesOrder {
             if (orderProducts.length === 0)
                 return { status: false, message: "This order have no product." };
             try {
-                const currOrder = yield dataPool.order.findUnique({
+                const currOrder = yield prismaConfig_1.default.order.findUnique({
                     where: {
                         id: orderUpdate.orderId
                     },
@@ -244,7 +243,7 @@ class SalesOrder {
                     return { status: false, message: "Order does not exist." };
                 for (let x = 0; x < currOrder.products.length; x++) {
                     const currProduct = currOrder.products[x];
-                    const deletedOrder = yield dataPool.orderWithProduct.delete({
+                    const deletedOrder = yield prismaConfig_1.default.orderWithProduct.delete({
                         where: {
                             product_id_order_id: {
                                 product_id: currProduct.product_id,
@@ -260,7 +259,7 @@ class SalesOrder {
                         }
                     });
                     const newStocks = deletedOrder.product.stocks + currProduct.quantity;
-                    yield dataPool.product.update({
+                    yield prismaConfig_1.default.product.update({
                         where: {
                             id: currProduct.product_id
                         },
@@ -278,7 +277,7 @@ class SalesOrder {
                 if (!currProduct.id || !currProduct.quantity || currProduct.quantity == 0)
                     return { status: false, message: `Item ${i + 1}: Invalid Object.` };
                 try {
-                    const productInfo = yield dataPool.product.findUnique({
+                    const productInfo = yield prismaConfig_1.default.product.findUnique({
                         where: {
                             id: currProduct.id
                         },
@@ -319,7 +318,7 @@ class SalesOrder {
             indexedDate.setDate(indexedDate.getDate() + paymentTerms);
             const amountDue = orderUpdate.discount != null ? this.total_price - orderUpdate.discount : this.total_price;
             try {
-                const updatedOrder = yield dataPool.order.update({
+                const updatedOrder = yield prismaConfig_1.default.order.update({
                     where: {
                         id: orderUpdate.orderId
                     },
@@ -340,7 +339,7 @@ class SalesOrder {
                     }
                 });
                 for (var x = 0; x < this.newProductStocks.length; x++) {
-                    yield dataPool.product.update({
+                    yield prismaConfig_1.default.product.update({
                         where: {
                             id: this.newProductStocks[x].productId,
                         },
@@ -361,7 +360,7 @@ exports.SalesOrder = SalesOrder;
 function holdOrder(orderId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const isPaid = yield dataPool.order.findUnique({
+            const isPaid = yield prismaConfig_1.default.order.findUnique({
                 where: {
                     id: orderId
                 },
@@ -380,7 +379,7 @@ function holdOrder(orderId) {
                 return { status: false, message: "This order is already delivered." };
             if (isPaid.transactions.length > 0)
                 return { status: false, message: "This order has payment ongoing." };
-            const orderHold = yield dataPool.order.update({
+            const orderHold = yield prismaConfig_1.default.order.update({
                 where: {
                     id: orderId
                 },
@@ -395,7 +394,7 @@ function holdOrder(orderId) {
             const orderProducts = orderHold.products;
             for (let i = 0; i < orderProducts.length; i++) {
                 const currProduct = orderProducts[i];
-                const productInfo = yield dataPool.product.findUnique({
+                const productInfo = yield prismaConfig_1.default.product.findUnique({
                     where: {
                         id: currProduct.product_id
                     },
@@ -404,7 +403,7 @@ function holdOrder(orderId) {
                     }
                 });
                 const stocksLeft = productInfo != null ? productInfo.stocks + currProduct.quantity : 0;
-                yield dataPool.product.update({
+                yield prismaConfig_1.default.product.update({
                     where: {
                         id: currProduct.product_id
                     },
@@ -424,7 +423,7 @@ exports.holdOrder = holdOrder;
 function returnOrder(orderId, productsInOrder) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const isPaid = yield dataPool.order.findUnique({
+            const isPaid = yield prismaConfig_1.default.order.findUnique({
                 where: {
                     id: orderId
                 },
@@ -456,7 +455,7 @@ function returnOrder(orderId, productsInOrder) {
             }
             for (var x = 0; x < productsInOrder.length; x++) {
                 try {
-                    const deletedProduct = yield dataPool.orderWithProduct.delete({
+                    const deletedProduct = yield prismaConfig_1.default.orderWithProduct.delete({
                         where: {
                             product_id_order_id: {
                                 order_id: orderId,
@@ -471,7 +470,7 @@ function returnOrder(orderId, productsInOrder) {
                         return { status: false, message: "Product does not exist" };
                     const stocksLeft = deletedProduct.product.stocks + deletedProduct.quantity;
                     totalReturnedPrice += parseFloat(deletedProduct.total_price.toFixed(2));
-                    yield dataPool.product.update({
+                    yield prismaConfig_1.default.product.update({
                         where: {
                             id: deletedProduct.product_id
                         },
@@ -486,7 +485,7 @@ function returnOrder(orderId, productsInOrder) {
             }
             const newTotalPrice = currTotalPrice - totalReturnedPrice;
             const newAmountDue = currAmountDue - totalReturnedPrice;
-            const orderReturned = yield dataPool.order.update({
+            const orderReturned = yield prismaConfig_1.default.order.update({
                 where: {
                     id: orderId
                 },
@@ -510,7 +509,7 @@ exports.returnOrder = returnOrder;
 function restoreOrder(orderId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const orderRestored = yield dataPool.order.update({
+            const orderRestored = yield prismaConfig_1.default.order.update({
                 where: {
                     id: orderId
                 },
@@ -526,7 +525,7 @@ function restoreOrder(orderId) {
             let newProductStocks = [];
             for (let i = 0; i < orderProducts.length; i++) {
                 const currProduct = orderProducts[i];
-                const productInfo = yield dataPool.product.findUnique({
+                const productInfo = yield prismaConfig_1.default.product.findUnique({
                     where: {
                         id: currProduct.product_id
                     },
@@ -543,7 +542,7 @@ function restoreOrder(orderId) {
                 });
             }
             for (var x = 0; x < newProductStocks.length; x++) {
-                yield dataPool.product.update({
+                yield prismaConfig_1.default.product.update({
                     where: {
                         id: newProductStocks[x].productId
                     },
@@ -563,7 +562,7 @@ exports.restoreOrder = restoreOrder;
 function deleteOrder(orderId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const orderInfo = yield dataPool.order.findUnique({
+            const orderInfo = yield prismaConfig_1.default.order.findUnique({
                 where: {
                     id: orderId
                 },
@@ -588,12 +587,12 @@ function deleteOrder(orderId) {
             if (orderInfo.is_active == true)
                 return { status: true, data: "Order is active." };
             try {
-                yield dataPool.orderWithProduct.deleteMany({
+                yield prismaConfig_1.default.orderWithProduct.deleteMany({
                     where: {
                         order_id: orderInfo.id
                     }
                 });
-                const deletedOrder = yield dataPool.order.delete({
+                const deletedOrder = yield prismaConfig_1.default.order.delete({
                     where: {
                         id: orderId
                     },
@@ -613,7 +612,7 @@ exports.deleteOrder = deleteOrder;
 function addTransaction(paymentDetails) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const orderInfo = yield dataPool.order.findUnique({
+            const orderInfo = yield prismaConfig_1.default.order.findUnique({
                 where: {
                     id: paymentDetails.order_id
                 },
@@ -640,7 +639,7 @@ function addTransaction(paymentDetails) {
                 return { status: false, message: "This is a canceled order" };
             if (orderInfo.sold != null)
                 return { status: false, message: "This order is already paid on" + orderInfo.sold.date_paid.toUTCString() };
-            const newTransaction = yield dataPool.transaction.create({
+            const newTransaction = yield prismaConfig_1.default.transaction.create({
                 data: {
                     order_id: paymentDetails.order_id,
                     account_id: paymentDetails.account_id,
@@ -659,7 +658,7 @@ function addTransaction(paymentDetails) {
             const currBalance = parseFloat((orderInfo.amount_due).toFixed(2)) - totalPaid;
             const remainBalance = currBalance - paymentDetails.amount_paid;
             if (remainBalance <= 0) {
-                yield dataPool.sales.create({
+                yield prismaConfig_1.default.sales.create({
                     data: {
                         order_id: paymentDetails.order_id,
                         date_paid: paymentDetails.payment_date != null ? paymentDetails.payment_date : new Date(),
@@ -677,7 +676,7 @@ exports.addTransaction = addTransaction;
 function updateTransaction(paymentDetails) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const updatedTransaction = yield dataPool.transaction.update({
+            const updatedTransaction = yield prismaConfig_1.default.transaction.update({
                 where: {
                     id: paymentDetails.payment_id
                 },
@@ -689,7 +688,7 @@ function updateTransaction(paymentDetails) {
                     amount_paid: true
                 }
             });
-            const orderInfo = yield dataPool.order.findUnique({
+            const orderInfo = yield prismaConfig_1.default.order.findUnique({
                 where: {
                     id: updatedTransaction.order_id
                 },
@@ -716,7 +715,7 @@ function updateTransaction(paymentDetails) {
             paymentHistory.forEach(payment => totalPaid += parseFloat((payment.amount_paid).toFixed(2)));
             const currBalance = parseFloat((orderInfo.amount_due).toFixed(2)) - totalPaid;
             if (currBalance <= 0 && orderInfo.sold == null) {
-                yield dataPool.sales.create({
+                yield prismaConfig_1.default.sales.create({
                     data: {
                         order_id: updatedTransaction.order_id,
                         date_paid: new Date(),
@@ -724,7 +723,7 @@ function updateTransaction(paymentDetails) {
                 });
             }
             else if (currBalance > 0 && orderInfo.sold != null) {
-                yield dataPool.sales.delete({
+                yield prismaConfig_1.default.sales.delete({
                     where: {
                         id: orderInfo.sold.id
                     }
@@ -741,7 +740,7 @@ exports.updateTransaction = updateTransaction;
 const compile = (templateName, orderId) => __awaiter(void 0, void 0, void 0, function* () {
     const filePath = path_1.default.join(__dirname, "..", "pdfTemplates", `${templateName}.hbs`);
     try {
-        const currOrder = yield dataPool.order.findUnique({
+        const currOrder = yield prismaConfig_1.default.order.findUnique({
             where: {
                 id: orderId,
             },
@@ -802,7 +801,7 @@ const compile = (templateName, orderId) => __awaiter(void 0, void 0, void 0, fun
 const compileReceipt = (templateName, orderId) => __awaiter(void 0, void 0, void 0, function* () {
     const filePath = path_1.default.join(__dirname, "..", "pdfTemplates", `${templateName}.hbs`);
     try {
-        const currOrder = yield dataPool.order.findUnique({
+        const currOrder = yield prismaConfig_1.default.order.findUnique({
             where: {
                 id: orderId,
             },
@@ -856,7 +855,7 @@ const compileReceipt = (templateName, orderId) => __awaiter(void 0, void 0, void
 function generateInvoicePDF(orderId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const orderInvoice = yield dataPool.order.findUnique({
+            const orderInvoice = yield prismaConfig_1.default.order.findUnique({
                 where: {
                     id: orderId
                 },
@@ -886,7 +885,7 @@ function generateInvoicePDF(orderId) {
             const invoiceRef = (0, storage_1.ref)(firebaseConfig_1.default, `invoices/${fileName}.pdf`);
             const uploadRef = yield (0, storage_1.uploadBytes)(invoiceRef, invoicePDF, { contentType: 'application/pdf' });
             const url = yield (0, storage_1.getDownloadURL)(uploadRef.ref);
-            yield dataPool.order.update({
+            yield prismaConfig_1.default.order.update({
                 where: {
                     id: orderId,
                 },
@@ -905,7 +904,7 @@ exports.generateInvoicePDF = generateInvoicePDF;
 function generateReceiptPDF(orderId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const orderReceipt = yield dataPool.order.findUnique({
+            const orderReceipt = yield prismaConfig_1.default.order.findUnique({
                 where: {
                     id: orderId
                 },
@@ -935,7 +934,7 @@ function generateReceiptPDF(orderId) {
             const receiptRef = (0, storage_1.ref)(firebaseConfig_1.default, `receipts/${fileName}.pdf`);
             const uploadRef = yield (0, storage_1.uploadBytes)(receiptRef, receiptPDF, { contentType: 'application/pdf' });
             const url = yield (0, storage_1.getDownloadURL)(uploadRef.ref);
-            yield dataPool.order.update({
+            yield prismaConfig_1.default.order.update({
                 where: {
                     id: orderId,
                 },
@@ -954,7 +953,7 @@ exports.generateReceiptPDF = generateReceiptPDF;
 function getInvoicePDF(orderId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const orderInvoice = yield dataPool.order.findUnique({
+            const orderInvoice = yield prismaConfig_1.default.order.findUnique({
                 where: {
                     id: orderId
                 },
@@ -977,7 +976,7 @@ exports.getInvoicePDF = getInvoicePDF;
 function getReceiptPDF(orderId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const orderInvoice = yield dataPool.order.findUnique({
+            const orderInvoice = yield prismaConfig_1.default.order.findUnique({
                 where: {
                     id: orderId
                 },
@@ -1000,7 +999,7 @@ exports.getReceiptPDF = getReceiptPDF;
 function setDelivered(orderId) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const currOrder = yield dataPool.order.findUnique({
+            const currOrder = yield prismaConfig_1.default.order.findUnique({
                 where: {
                     id: orderId
                 },
@@ -1012,7 +1011,7 @@ function setDelivered(orderId) {
                 return { status: false, message: "Order does not exist." };
             if (currOrder.delivered != null)
                 return { status: false, message: "Order is already delivered." };
-            const deliveredOrder = yield dataPool.order.update({
+            const deliveredOrder = yield prismaConfig_1.default.order.update({
                 where: {
                     id: orderId
                 },

@@ -8,14 +8,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.LocationObject = exports.AccountObject = exports.EmployeeObject = exports.ExecutivePosition = exports.PositionEnumType = void 0;
 const graphql_1 = require("graphql");
 const graphql_scalars_1 = require("graphql-scalars");
-const client_1 = require("@prisma/client");
 const graphqlObjects_1 = require("../OrdersAndSales/graphqlObjects");
 const graphqlObjects_2 = require("../PurchasedAndPayables/graphqlObjects");
-const dataPool = new client_1.PrismaClient(); //database pool
+const prismaConfig_1 = __importDefault(require("../prismaConfig"));
 exports.PositionEnumType = new graphql_1.GraphQLEnumType({
     name: "PositionTypes",
     description: "Company available positions",
@@ -56,7 +58,7 @@ exports.EmployeeObject = new graphql_1.GraphQLObjectType({
         user_account: { type: exports.AccountObject,
             resolve: (employee) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const account = yield dataPool.account.findUnique({
+                    const account = yield prismaConfig_1.default.account.findUnique({
                         where: {
                             employee_id: employee.id
                         }
@@ -78,7 +80,7 @@ exports.EmployeeObject = new graphql_1.GraphQLObjectType({
                     const currYear = new Date().getFullYear();
                     const startDate = new Date(currYear, 0, 1);
                     const endDate = new Date(currYear, 12, 0);
-                    const totalSold = yield dataPool.order.aggregate({
+                    const totalSold = yield prismaConfig_1.default.order.aggregate({
                         where: {
                             AND: {
                                 employee_id: employee.id,
@@ -102,7 +104,7 @@ exports.EmployeeObject = new graphql_1.GraphQLObjectType({
                     const currYear = new Date(args.date).getFullYear();
                     const startDate = new Date(currYear, 0, 1);
                     const endDate = new Date(currYear, 12, 0);
-                    const totalSold = yield dataPool.order.aggregate({
+                    const totalSold = yield prismaConfig_1.default.order.aggregate({
                         where: {
                             AND: {
                                 employee_id: employee.id,
@@ -136,7 +138,7 @@ exports.EmployeeObject = new graphql_1.GraphQLObjectType({
                     for (let x = 0; x < 12; x++) {
                         const startDate = new Date(currYear, x, 1);
                         const endDate = new Date(currYear, (x + 1), 0);
-                        const totalSold = yield dataPool.order.aggregate({
+                        const totalSold = yield prismaConfig_1.default.order.aggregate({
                             where: {
                                 AND: {
                                     employee_id: employee.id,
@@ -165,7 +167,7 @@ exports.EmployeeObject = new graphql_1.GraphQLObjectType({
                     for (let x = 0; x < 12; x++) {
                         const startDate = new Date(currYear, x, 1);
                         const endDate = new Date(currYear, (x + 1), 0);
-                        const totalSold = yield dataPool.order.aggregate({
+                        const totalSold = yield prismaConfig_1.default.order.aggregate({
                             where: {
                                 AND: {
                                     employee_id: employee.id,
@@ -201,7 +203,7 @@ exports.EmployeeObject = new graphql_1.GraphQLObjectType({
                     const startDate = new Date(currYear, 0, 1);
                     const endDate = new Date((currYear + 1), 0, 1);
                     try {
-                        const orderList = yield dataPool.order.findMany({
+                        const orderList = yield prismaConfig_1.default.order.findMany({
                             where: {
                                 AND: {
                                     employee_id: employee.id,
@@ -223,7 +225,7 @@ exports.EmployeeObject = new graphql_1.GraphQLObjectType({
                     const startDate = new Date(currYear, 0, 1);
                     const endDate = new Date((currYear + 1), 0, 1);
                     try {
-                        const orderList = yield dataPool.order.findMany({
+                        const orderList = yield prismaConfig_1.default.order.findMany({
                             where: {
                                 AND: {
                                     employee_id: employee.id,
@@ -252,7 +254,7 @@ exports.AccountObject = new graphql_1.GraphQLObjectType({
         employee: { type: (0, graphql_1.GraphQLNonNull)(exports.EmployeeObject),
             resolve: (account) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const employee = yield dataPool.employee.findFirst({
+                    const employee = yield prismaConfig_1.default.employee.findFirst({
                         where: {
                             user_account: {
                                 id: account.id
@@ -270,7 +272,7 @@ exports.AccountObject = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLList)(graphqlObjects_1.OrderObject),
             resolve: (account) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const orders = yield dataPool.order.findMany({
+                    const orders = yield prismaConfig_1.default.order.findMany({
                         where: {
                             account_id: account.id,
                         }
@@ -286,7 +288,7 @@ exports.AccountObject = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLList)(graphqlObjects_2.PurchaseObject),
             resolve: (account) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const purchase = yield dataPool.purchase.findMany({
+                    const purchase = yield prismaConfig_1.default.purchase.findMany({
                         where: {
                             account_id: account.id
                         }

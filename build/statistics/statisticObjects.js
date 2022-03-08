@@ -8,12 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.StatusReport = void 0;
-const client_1 = require("@prisma/client");
 const graphql_1 = require("graphql");
 const graphql_scalars_1 = require("graphql-scalars");
-const dataPool = new client_1.PrismaClient();
+const prismaConfig_1 = __importDefault(require("../prismaConfig"));
 exports.StatusReport = new graphql_1.GraphQLObjectType({
     name: "StatusReport",
     description: "Current Status of the Company",
@@ -22,7 +24,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLInt,
             resolve: () => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const receivables = yield dataPool.order.count({
+                    const receivables = yield prismaConfig_1.default.order.count({
                         where: {
                             sold: null
                         }
@@ -38,7 +40,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLInt,
             resolve: () => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const payables = yield dataPool.purchase.count({
+                    const payables = yield prismaConfig_1.default.purchase.count({
                         where: {
                             is_paid: false
                         }
@@ -54,7 +56,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLInt,
             resolve: () => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const shipping = yield dataPool.order.count({
+                    const shipping = yield prismaConfig_1.default.order.count({
                         where: {
                             delivered: null
                         }
@@ -70,7 +72,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLInt,
             resolve: () => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const arriving = yield dataPool.purchase.count({
+                    const arriving = yield prismaConfig_1.default.purchase.count({
                         where: {
                             delivered: null
                         }
@@ -96,7 +98,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
                     const firstday = new Date(datePointer.setDate(datePointer.getDate() - datePointer.getDay()));
                     const lastday = new Date(datePointer.setDate(firstday.getDate() + 7));
                     try {
-                        const totalSales = yield dataPool.transaction.aggregate({
+                        const totalSales = yield prismaConfig_1.default.transaction.aggregate({
                             where: {
                                 payment_date: {
                                     gte: firstday.toISOString(),
@@ -107,7 +109,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
                                 amount_paid: true
                             }
                         });
-                        const totalPurchase = yield dataPool.payables.aggregate({
+                        const totalPurchase = yield prismaConfig_1.default.payables.aggregate({
                             where: {
                                 payment_date: {
                                     gte: firstday.toISOString(),
@@ -146,11 +148,11 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
                 const endDate = new Date((year + 1), 0, 1);
                 let categoryReport = [];
                 try {
-                    const getAllCategories = yield dataPool.category.findMany();
+                    const getAllCategories = yield prismaConfig_1.default.category.findMany();
                     for (let x = 0; x < getAllCategories.length; x++) {
                         const currCategory = getAllCategories[x];
                         try {
-                            const orderCount = yield dataPool.orderWithProduct.count({
+                            const orderCount = yield prismaConfig_1.default.orderWithProduct.count({
                                 where: {
                                     AND: {
                                         product: {
@@ -193,7 +195,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
                 const endDate = new Date((year + 1), 0, 1);
                 let agentReport = [];
                 try {
-                    const allAgents = yield dataPool.employee.findMany({
+                    const allAgents = yield prismaConfig_1.default.employee.findMany({
                         where: {
                             AND: {
                                 position: "Sales Agent",
@@ -203,7 +205,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
                     });
                     for (let i = 0; i < allAgents.length; i++) {
                         const currAgent = allAgents[i];
-                        const totalSales = yield dataPool.order.aggregate({
+                        const totalSales = yield prismaConfig_1.default.order.aggregate({
                             where: {
                                 AND: {
                                     order_date: {
@@ -258,7 +260,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLList)(ProductStatus),
             resolve: () => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const products = yield dataPool.product.findMany({
+                    const products = yield prismaConfig_1.default.product.findMany({
                         orderBy: {
                             stocks: 'asc'
                         },
@@ -284,7 +286,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
                 let notifications = [];
                 if (context.position == "Sales Agent") {
                     try {
-                        const dueOrders = yield dataPool.order.count({
+                        const dueOrders = yield prismaConfig_1.default.order.count({
                             where: {
                                 AND: {
                                     employee_id: context.userId,
@@ -310,7 +312,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
                 }
                 try {
                     const currDate1 = new Date();
-                    const dueOrders = yield dataPool.order.count({
+                    const dueOrders = yield prismaConfig_1.default.order.count({
                         where: {
                             AND: {
                                 sold: null,
@@ -332,7 +334,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
                         });
                     }
                     const currDate2 = new Date();
-                    const duePurchase = yield dataPool.purchase.count({
+                    const duePurchase = yield prismaConfig_1.default.purchase.count({
                         where: {
                             AND: {
                                 is_active: true,
@@ -354,7 +356,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
                         });
                     }
                     const currDate3 = new Date();
-                    const overdueOrders = yield dataPool.order.count({
+                    const overdueOrders = yield prismaConfig_1.default.order.count({
                         where: {
                             AND: {
                                 sold: null,
@@ -375,7 +377,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
                         });
                     }
                     const currDate4 = new Date();
-                    const overduePurchase = yield dataPool.purchase.count({
+                    const overduePurchase = yield prismaConfig_1.default.purchase.count({
                         where: {
                             AND: {
                                 is_paid: false,
@@ -395,7 +397,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
                             link: '/purchase/overdue'
                         });
                     }
-                    const products = yield dataPool.product.count({
+                    const products = yield prismaConfig_1.default.product.count({
                         where: {
                             stocks: {
                                 lte: 10
@@ -420,7 +422,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
                             link: null
                         });
                     }
-                    const orderDelivery = yield dataPool.order.count({
+                    const orderDelivery = yield prismaConfig_1.default.order.count({
                         where: {
                             AND: {
                                 is_active: true,
@@ -437,7 +439,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
                             link: '/orders/delivery'
                         });
                     }
-                    const purchaseDelivery = yield dataPool.purchase.count({
+                    const purchaseDelivery = yield prismaConfig_1.default.purchase.count({
                         where: {
                             AND: {
                                 is_active: true,
@@ -455,7 +457,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
                         });
                     }
                     const currDate5 = new Date();
-                    const newOrders = yield dataPool.order.count({
+                    const newOrders = yield prismaConfig_1.default.order.count({
                         where: {
                             AND: {
                                 is_active: true,
@@ -476,7 +478,7 @@ exports.StatusReport = new graphql_1.GraphQLObjectType({
                         });
                     }
                     const currDate6 = new Date();
-                    const receivables = yield dataPool.transaction.aggregate({
+                    const receivables = yield prismaConfig_1.default.transaction.aggregate({
                         where: {
                             payment_date: {
                                 gte: currDate6.toISOString(),
@@ -556,7 +558,7 @@ const EventReport = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLInt,
             resolve: (parent) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const newOrders = yield dataPool.order.count({
+                    const newOrders = yield prismaConfig_1.default.order.count({
                         where: {
                             AND: {
                                 is_active: true,
@@ -578,7 +580,7 @@ const EventReport = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLInt,
             resolve: (parent) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const paidOrders = yield dataPool.sales.count({
+                    const paidOrders = yield prismaConfig_1.default.sales.count({
                         where: {
                             date_paid: {
                                 gte: new Date(parent.start_date).toISOString(),
@@ -597,7 +599,7 @@ const EventReport = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLInt,
             resolve: (parent) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const overdueOrders = yield dataPool.order.count({
+                    const overdueOrders = yield prismaConfig_1.default.order.count({
                         where: {
                             due_date: {
                                 lt: new Date(parent.start_date).toISOString()
@@ -615,7 +617,7 @@ const EventReport = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLInt,
             resolve: (parent) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const overdueOrders = yield dataPool.order.count({
+                    const overdueOrders = yield prismaConfig_1.default.order.count({
                         where: {
                             AND: {
                                 is_active: true,
@@ -637,7 +639,7 @@ const EventReport = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLInt,
             resolve: (parent) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const dueCredits = yield dataPool.purchase.count({
+                    const dueCredits = yield prismaConfig_1.default.purchase.count({
                         where: {
                             AND: {
                                 is_active: false,

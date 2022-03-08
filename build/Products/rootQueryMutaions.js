@@ -8,14 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RootQuery = exports.RootMutation = void 0;
 const graphql_1 = require("graphql");
 const graphqlObjects_1 = require("./graphqlObjects");
-const client_1 = require("@prisma/client");
-const dataPool = new client_1.PrismaClient();
-const UnAuthorized = ["Warehouse Staff", "Delivery Personnel", "Sales Agent"];
-const ExecutivePosition = ["President", "Vice President", "Manager"];
+const prismaConfig_1 = __importDefault(require("../prismaConfig"));
 ;
 exports.RootMutation = new graphql_1.GraphQLObjectType({
     name: "RootMutation",
@@ -32,10 +32,8 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
                 price: { type: (0, graphql_1.GraphQLNonNull)(graphql_1.GraphQLFloat) }
             },
             resolve: (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
-                if (UnAuthorized.includes(context.position))
-                    throw new Error("Unauthorized");
                 try {
-                    const newProduct = yield dataPool.product.create({
+                    const newProduct = yield prismaConfig_1.default.product.create({
                         data: {
                             name: args.name,
                             bar_code: args.bar_code,
@@ -64,10 +62,8 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
                 is_active: { type: graphql_1.GraphQLBoolean },
             },
             resolve: (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
-                if (UnAuthorized.includes(context.position))
-                    throw new Error("Unauthorized");
                 try {
-                    const updatedProduct = yield dataPool.product.update({
+                    const updatedProduct = yield prismaConfig_1.default.product.update({
                         where: {
                             id: args.id
                         },
@@ -81,7 +77,7 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
                         }
                     });
                     if (args.is_active == null) {
-                        yield dataPool.productDetails.deleteMany({
+                        yield prismaConfig_1.default.productDetails.deleteMany({
                             where: {
                                 product_id: updatedProduct.id
                             }
@@ -101,10 +97,8 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
                 id: { type: (0, graphql_1.GraphQLNonNull)(graphql_1.GraphQLInt) }
             },
             resolve: (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
-                if (UnAuthorized.includes(context.position))
-                    throw new Error("Unauthorized");
                 try {
-                    const removedProduct = yield dataPool.product.update({
+                    const removedProduct = yield prismaConfig_1.default.product.update({
                         where: {
                             id: args.id
                         },
@@ -126,15 +120,13 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
                 id: { type: (0, graphql_1.GraphQLNonNull)(graphql_1.GraphQLInt) }
             },
             resolve: (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
-                if (!ExecutivePosition.includes(context.position))
-                    throw new Error("Unauthorized");
                 try {
-                    yield dataPool.productDetails.deleteMany({
+                    yield prismaConfig_1.default.productDetails.deleteMany({
                         where: {
                             product_id: args.id
                         }
                     });
-                    const deletedProduct = yield dataPool.product.delete({
+                    const deletedProduct = yield prismaConfig_1.default.product.delete({
                         where: {
                             id: args.id
                         }
@@ -154,10 +146,8 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
                 description: { type: (0, graphql_1.GraphQLNonNull)(graphql_1.GraphQLString) }
             },
             resolve: (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
-                if (UnAuthorized.includes(context.position))
-                    throw new Error("Unauthorized");
                 try {
-                    const newCategory = yield dataPool.category.create({
+                    const newCategory = yield prismaConfig_1.default.category.create({
                         data: {
                             name: args.name,
                             description: args.description
@@ -179,10 +169,8 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
                 description: { type: graphql_1.GraphQLString }
             },
             resolve: (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
-                if (UnAuthorized.includes(context.position))
-                    throw new Error("Unauthorized");
                 try {
-                    const updatedCategory = yield dataPool.category.update({
+                    const updatedCategory = yield prismaConfig_1.default.category.update({
                         where: {
                             id: args.id
                         },
@@ -205,16 +193,14 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
                 id: { type: (0, graphql_1.GraphQLNonNull)(graphql_1.GraphQLInt) }
             },
             resolve: (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
-                if (UnAuthorized.includes(context.position))
-                    throw new Error("Unauthorized");
                 try {
-                    const countCategoryProd = yield dataPool.product.count({
+                    const countCategoryProd = yield prismaConfig_1.default.product.count({
                         where: {
                             category_id: args.id
                         }
                     });
                     if (countCategoryProd === 0 || !countCategoryProd) {
-                        const deleteCategory = yield dataPool.category.delete({
+                        const deleteCategory = yield prismaConfig_1.default.category.delete({
                             where: {
                                 id: args.id
                             }
@@ -240,11 +226,9 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
                 text_value: { type: graphql_1.GraphQLString },
             },
             resolve: (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
-                if (UnAuthorized.includes(context.position))
-                    throw new Error("Unauthorized");
                 if (args.num_value && args.unit) {
                     try {
-                        const newProductDetail = yield dataPool.productDetails.create({
+                        const newProductDetail = yield prismaConfig_1.default.productDetails.create({
                             data: {
                                 product_id: args.product_id,
                                 type: args.type,
@@ -260,7 +244,7 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
                 }
                 else if (args.text_value && !args.num_value) {
                     try {
-                        const newProductDetail = yield dataPool.productDetails.create({
+                        const newProductDetail = yield prismaConfig_1.default.productDetails.create({
                             data: {
                                 product_id: args.product_id,
                                 type: args.type,
@@ -289,10 +273,9 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
                 text_value: { type: graphql_1.GraphQLString },
             },
             resolve: (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
-                if (UnAuthorized.includes(context.position))
-                    throw new Error("Unauthorized");
+                //removed
                 try {
-                    const updatedDetail = yield dataPool.productDetails.update({
+                    const updatedDetail = yield prismaConfig_1.default.productDetails.update({
                         where: {
                             id: args.id
                         },
@@ -317,10 +300,9 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
                 id: { type: (0, graphql_1.GraphQLNonNull)(graphql_1.GraphQLInt) },
             },
             resolve: (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
-                if (UnAuthorized.includes(context.position))
-                    throw new Error("Unauthorized");
+                //removed
                 try {
-                    const deletedProdDetail = yield dataPool.productDetails.delete({
+                    const deletedProdDetail = yield prismaConfig_1.default.productDetails.delete({
                         where: { id: args.id }
                     });
                     return deletedProdDetail;
@@ -341,7 +323,7 @@ exports.RootQuery = new graphql_1.GraphQLObjectType({
             description: "Show all products without filter",
             resolve: () => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const showAllProducts = yield dataPool.product.findMany({
+                    const showAllProducts = yield prismaConfig_1.default.product.findMany({
                         where: {
                             is_active: true,
                         },
@@ -361,7 +343,7 @@ exports.RootQuery = new graphql_1.GraphQLObjectType({
             description: "Show all products without filter",
             resolve: () => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const showAllProducts = yield dataPool.product.findMany({
+                    const showAllProducts = yield prismaConfig_1.default.product.findMany({
                         where: {
                             is_active: false,
                         },
@@ -388,7 +370,7 @@ exports.RootQuery = new graphql_1.GraphQLObjectType({
                 if (!args.id && !args.name && !args.bar_code)
                     throw new Error("Invalid arguments.");
                 try {
-                    const resultProduct = yield dataPool.product.findMany({
+                    const resultProduct = yield prismaConfig_1.default.product.findMany({
                         where: {
                             OR: {
                                 id: args.id != null ? args.id : undefined,
@@ -418,7 +400,7 @@ exports.RootQuery = new graphql_1.GraphQLObjectType({
             },
             resolve: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const resultProduct = yield dataPool.product.findUnique({
+                    const resultProduct = yield prismaConfig_1.default.product.findUnique({
                         where: {
                             id: args.id
                         },
@@ -435,7 +417,7 @@ exports.RootQuery = new graphql_1.GraphQLObjectType({
             description: "Search a product base on id",
             resolve: () => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const resultProduct = yield dataPool.product.findMany({
+                    const resultProduct = yield prismaConfig_1.default.product.findMany({
                         orderBy: {
                             stocks: 'desc'
                         },
@@ -456,7 +438,7 @@ exports.RootQuery = new graphql_1.GraphQLObjectType({
             },
             resolve: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const filtredProducts = yield dataPool.product.findMany({
+                    const filtredProducts = yield prismaConfig_1.default.product.findMany({
                         where: {
                             category_id: args.category_id,
                         }
@@ -481,7 +463,7 @@ exports.RootQuery = new graphql_1.GraphQLObjectType({
             resolve: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
                 if (args.num_value && args.unit) {
                     try {
-                        const resultProducts = yield dataPool.product.findMany({
+                        const resultProducts = yield prismaConfig_1.default.product.findMany({
                             where: {
                                 AND: {
                                     category_id: args.category_id,
@@ -505,7 +487,7 @@ exports.RootQuery = new graphql_1.GraphQLObjectType({
                 }
                 else if (args.text_value && !args.num_value) {
                     try {
-                        const resultProducts = yield dataPool.product.findMany({
+                        const resultProducts = yield prismaConfig_1.default.product.findMany({
                             where: {
                                 AND: {
                                     category_id: args.category_id,
@@ -536,7 +518,7 @@ exports.RootQuery = new graphql_1.GraphQLObjectType({
             description: "Show all available categories",
             resolve: () => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const allCategories = yield dataPool.category.findMany();
+                    const allCategories = yield prismaConfig_1.default.category.findMany();
                     return allCategories;
                 }
                 catch (err) {
@@ -552,7 +534,7 @@ exports.RootQuery = new graphql_1.GraphQLObjectType({
             },
             resolve: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const resultCategory = yield dataPool.category.findMany({
+                    const resultCategory = yield prismaConfig_1.default.category.findMany({
                         where: {
                             OR: {
                                 name: {

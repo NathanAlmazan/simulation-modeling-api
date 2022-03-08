@@ -53,7 +53,7 @@ export const EmployeeObject: GraphQLObjectType = new GraphQLObjectType({
                         }
                     });
 
-                    await dataPool.$disconnect();
+                    
                     return account;
                 } catch (err) {
                     throw new Error((err as Error).message);
@@ -115,7 +115,7 @@ export const EmployeeObject: GraphQLObjectType = new GraphQLObjectType({
                     });
 
                     const result = totalSold._sum.amount_due != null ? totalSold._sum.amount_due : 0;
-                    await dataPool.$disconnect();
+                    
                     return parseFloat(result.toFixed(2));
                 }
             }
@@ -158,7 +158,7 @@ export const EmployeeObject: GraphQLObjectType = new GraphQLObjectType({
                         salesHistory.push(amount);
                     }
                     
-                    await dataPool.$disconnect();
+                    
                     return salesHistory;
 
                 } else {
@@ -193,7 +193,7 @@ export const EmployeeObject: GraphQLObjectType = new GraphQLObjectType({
                         salesHistory.push(amount);
                     }
 
-                    await dataPool.$disconnect();
+                    
                     return salesHistory;
                 }
             }
@@ -245,7 +245,7 @@ export const EmployeeObject: GraphQLObjectType = new GraphQLObjectType({
                             },
                         });
 
-                        await dataPool.$disconnect();
+                        
                         return orderList;
                     } catch (err) {
                         throw new Error((err as Error).message);
@@ -272,7 +272,7 @@ export const AccountObject: GraphQLObjectType = new GraphQLObjectType({
                         }
                     });
 
-                    await dataPool.$disconnect();
+                    
                     return employee;
                 } catch (err) {
                     throw new Error((err as Error).message);
@@ -289,7 +289,7 @@ export const AccountObject: GraphQLObjectType = new GraphQLObjectType({
                         }
                     });
 
-                    await dataPool.$disconnect();
+                    
                     return orders;
                 } catch (err) {
                     throw new Error((err as Error).message);
@@ -305,8 +305,8 @@ export const AccountObject: GraphQLObjectType = new GraphQLObjectType({
                             account_id: account.id
                         }
                     });
+
                     
-                    await dataPool.$disconnect();
                     return purchase;
                 } catch (err) {
                     throw new Error((err as Error).message);

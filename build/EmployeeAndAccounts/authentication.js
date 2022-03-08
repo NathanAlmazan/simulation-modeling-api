@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.checkCredentials = void 0;
 const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
-const client_1 = require("@prisma/client");
 const passport_1 = __importDefault(require("passport"));
 const passport_local_1 = __importDefault(require("passport-local"));
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -29,16 +28,16 @@ const path_1 = __importDefault(require("path"));
 const multer_1 = __importDefault(require("multer"));
 const storage_1 = require("firebase/storage");
 const firebaseConfig_1 = __importDefault(require("../firebaseConfig"));
+const prismaConfig_1 = __importDefault(require("../prismaConfig"));
 let authRoute = express_1.default.Router(); //initialized express router
 dotenv_1.default.config(); //initialized environment variables
-const dataPool = new client_1.PrismaClient(); //database pool
 //setup authentication with passport
 const LocalStrategy = passport_local_1.default.Strategy;
 passport_1.default.use(new LocalStrategy({ usernameField: "email" }, function (email, password, done) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             //get account from database
-            const employee = yield dataPool.employee.findUnique({
+            const employee = yield prismaConfig_1.default.employee.findUnique({
                 where: {
                     email: email
                 },
@@ -131,7 +130,7 @@ authRoute.post('/upload/profile/:employeeId', checkCredentials, upload.single('i
             const profileRef = (0, storage_1.ref)(firebaseConfig_1.default, 'profiles/' + profileImage.originalname);
             const uploadRef = yield (0, storage_1.uploadBytes)(profileRef, profileImage.buffer, { contentType: profileImage.mimetype });
             const url = yield (0, storage_1.getDownloadURL)(uploadRef.ref);
-            yield dataPool.employee.update({
+            yield prismaConfig_1.default.employee.update({
                 where: {
                     id: parseInt(req.params.employeeId),
                 },
@@ -169,7 +168,7 @@ authRoute.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, functi
     else {
         try {
             //check if employee exist
-            const employee = yield dataPool.employee.findUnique({
+            const employee = yield prismaConfig_1.default.employee.findUnique({
                 where: {
                     email: email
                 },
@@ -190,7 +189,7 @@ authRoute.post('/signup', (req, res) => __awaiter(void 0, void 0, void 0, functi
             //hash password 
             const hashedPassword = yield bcryptjs_1.default.hash(password, 10);
             //register new account
-            const newAccount = yield dataPool.account.create({
+            const newAccount = yield prismaConfig_1.default.account.create({
                 data: {
                     employee_id: employee.id,
                     password: hashedPassword
@@ -250,7 +249,7 @@ authRoute.get('/user', checkCredentials, (req, res) => __awaiter(void 0, void 0,
     if (!profile)
         return res.status(404).json({ error: "Invalid user" });
     try {
-        const profileImage = yield dataPool.employee.findUnique({
+        const profileImage = yield prismaConfig_1.default.employee.findUnique({
             where: {
                 id: profile.userId
             },
@@ -277,7 +276,7 @@ authRoute.post('/resetPassword', (req, res) => __awaiter(void 0, void 0, void 0,
         return res.status(404).json({ error: "Email and Username is required" });
     try {
         //check user
-        const accountVerify = yield dataPool.employee.findFirst({
+        const accountVerify = yield prismaConfig_1.default.employee.findFirst({
             where: {
                 email: email,
                 first_name: firstName,
@@ -299,7 +298,7 @@ authRoute.post('/resetPassword', (req, res) => __awaiter(void 0, void 0, void 0,
         //hash reset code
         try {
             const randomCode = Math.floor(100000 + Math.random() * 900000);
-            yield dataPool.account.update({
+            yield prismaConfig_1.default.account.update({
                 where: {
                     id: accountVerify.user_account.id
                 },
@@ -333,7 +332,7 @@ authRoute.post('/confirmResetPass/:resetCode/:accountId', (req, res) => __awaite
         return res.status(400).json({ error: "Invalid New Password." });
     //check refresh code
     try {
-        const registeredCode = yield dataPool.account.findUnique({
+        const registeredCode = yield prismaConfig_1.default.account.findUnique({
             where: {
                 id: parseInt(accountId)
             },
@@ -346,7 +345,7 @@ authRoute.post('/confirmResetPass/:resetCode/:accountId', (req, res) => __awaite
             return res.status(400).json({ error: "Code does not match." });
         //input new password
         const hashedPassword = yield bcryptjs_1.default.hash(newPassword, 10);
-        const callback = yield dataPool.account.update({
+        const callback = yield prismaConfig_1.default.account.update({
             where: {
                 id: registeredCode.id
             },
@@ -365,7 +364,7 @@ authRoute.post('/confirmResetPass/:resetCode/:accountId', (req, res) => __awaite
     }
 }));
 authRoute.get('/load-locations', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const existLocation = yield dataPool.locations.findFirst({
+    const existLocation = yield prismaConfig_1.default.locations.findFirst({
         where: {
             id: {
                 gte: 0
@@ -375,7 +374,7 @@ authRoute.get('/load-locations', (req, res) => __awaiter(void 0, void 0, void 0,
     if (existLocation)
         return res.status(400).json({ message: "Table already exist." });
     try {
-        const setupLocations = yield dataPool.locations.createMany({
+        const setupLocations = yield prismaConfig_1.default.locations.createMany({
             data: PhilLocations_1.default,
             skipDuplicates: true
         });
@@ -391,7 +390,7 @@ authRoute.post('/suggestLocation', (req, res) => __awaiter(void 0, void 0, void 
     if (!cityQuery && !provinceQuery)
         return res.status(400).json({ error: "Invalid parameters." });
     try {
-        const locations = yield dataPool.locations.findMany({
+        const locations = yield prismaConfig_1.default.locations.findMany({
             where: {
                 city: cityQuery != null ? {
                     contains: cityQuery
@@ -417,7 +416,7 @@ authRoute.post('/addLocation', (req, res) => __awaiter(void 0, void 0, void 0, f
     if (!cityQuery || !provinceQuery)
         return res.status(400).json({ error: "City and Province is required." });
     try {
-        const newLocation = yield dataPool.locations.create({
+        const newLocation = yield prismaConfig_1.default.locations.create({
             data: {
                 city: cityQuery,
                 province: provinceQuery
@@ -437,7 +436,7 @@ const Schema = new graphql_1.GraphQLSchema({
     query: rootQueryMutation_1.RootQuery,
     mutation: rootQueryMutation_1.RootMutation
 });
-authRoute.use('/graphql', checkCredentials, (0, express_graphql_1.graphqlHTTP)(req => ({
+authRoute.use('/graphql', (0, express_graphql_1.graphqlHTTP)(req => ({
     schema: Schema,
     context: req.user,
     graphql: false

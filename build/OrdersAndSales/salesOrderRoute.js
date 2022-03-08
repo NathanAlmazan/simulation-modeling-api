@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const express_graphql_1 = require("express-graphql");
 const graphql_1 = require("graphql");
-const path_1 = __importDefault(require("path"));
 const authentication_1 = require("../EmployeeAndAccounts/authentication");
 const rootQueryMutations_1 = require("./rootQueryMutations");
 const salesOrderClass_1 = require("./salesOrderClass");
@@ -185,14 +184,9 @@ salesOrderRoute.get('/get-receipt/:orderId', authentication_1.checkCredentials, 
         return res.status(400).json({ error: response.message });
     return res.status(201).json({ data: response.message });
 }));
-const mediaDIR = path_1.default.join(__dirname, '..', 'media', 'invoices');
-const receiptDIR = path_1.default.join(__dirname, '..', 'media', 'receipts');
-salesOrderRoute.use('/invoices', express_1.default.static(mediaDIR));
-salesOrderRoute.use('/receipts', express_1.default.static(receiptDIR));
-salesOrderRoute.use('/graphql', authentication_1.checkCredentials, (0, express_graphql_1.graphqlHTTP)(req => ({
+salesOrderRoute.use('/graphql', (0, express_graphql_1.graphqlHTTP)({
     schema: Schema,
-    context: req.user,
-    graphql: false
-})));
+    graphiql: false
+}));
 exports.default = salesOrderRoute;
 //# sourceMappingURL=salesOrderRoute.js.map

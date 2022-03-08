@@ -8,12 +8,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ProductDetailsObject = exports.CategoryObject = exports.ProductObject = void 0;
 const graphql_1 = require("graphql");
-const client_1 = require("@prisma/client");
 const graphql_scalars_1 = require("graphql-scalars");
-const dataPool = new client_1.PrismaClient(); //database pool
+const prismaConfig_1 = __importDefault(require("../prismaConfig"));
 ;
 exports.ProductObject = new graphql_1.GraphQLObjectType({
     name: "Products",
@@ -31,7 +33,7 @@ exports.ProductObject = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLList)(exports.ProductDetailsObject),
             resolve: (product) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const details = yield dataPool.productDetails.findMany({
+                    const details = yield prismaConfig_1.default.productDetails.findMany({
                         where: {
                             product_id: product.id
                         }
@@ -47,7 +49,7 @@ exports.ProductObject = new graphql_1.GraphQLObjectType({
             type: exports.CategoryObject,
             resolve: (product) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const category = yield dataPool.category.findUnique({
+                    const category = yield prismaConfig_1.default.category.findUnique({
                         where: {
                             id: product.category_id
                         }
@@ -63,12 +65,12 @@ exports.ProductObject = new graphql_1.GraphQLObjectType({
             type: graphql_1.GraphQLBoolean,
             resolve: (product) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const response = yield dataPool.orderWithProduct.findFirst({
+                    const response = yield prismaConfig_1.default.orderWithProduct.findFirst({
                         where: {
                             product_id: product.id
                         }
                     });
-                    const response2 = yield dataPool.purcahseWithProduct.findFirst({
+                    const response2 = yield prismaConfig_1.default.purcahseWithProduct.findFirst({
                         where: {
                             product_id: product.id
                         }
@@ -88,7 +90,7 @@ exports.ProductObject = new graphql_1.GraphQLObjectType({
                 const startDate = new Date(currYear, 0, 1);
                 const endDate = new Date(currYear, 11, 31);
                 try {
-                    const totalSold = yield dataPool.orderWithProduct.aggregate({
+                    const totalSold = yield prismaConfig_1.default.orderWithProduct.aggregate({
                         where: {
                             AND: {
                                 product_id: product.id,
@@ -127,7 +129,7 @@ exports.ProductObject = new graphql_1.GraphQLObjectType({
                     for (let x = 0; x < 12; x++) {
                         const startDate = new Date(currYear, x, 1);
                         const endDate = new Date(currYear, (x + 1), 0);
-                        const totalSold = yield dataPool.orderWithProduct.aggregate({
+                        const totalSold = yield prismaConfig_1.default.orderWithProduct.aggregate({
                             where: {
                                 AND: {
                                     product_id: product.id,
@@ -159,7 +161,7 @@ exports.ProductObject = new graphql_1.GraphQLObjectType({
                     for (let x = 0; x < 12; x++) {
                         const startDate = new Date(currYear, x, 1);
                         const endDate = new Date(currYear, (x + 1), 0);
-                        const totalSold = yield dataPool.orderWithProduct.aggregate({
+                        const totalSold = yield prismaConfig_1.default.orderWithProduct.aggregate({
                             where: {
                                 AND: {
                                     product_id: product.id,
@@ -199,7 +201,7 @@ exports.ProductObject = new graphql_1.GraphQLObjectType({
                     for (let x = 0; x < 12; x++) {
                         const startDate = new Date(currYear, x, 1);
                         const endDate = new Date(currYear, (x + 1), 0);
-                        const totalSold = yield dataPool.purcahseWithProduct.aggregate({
+                        const totalSold = yield prismaConfig_1.default.purcahseWithProduct.aggregate({
                             where: {
                                 AND: {
                                     product_id: product.id,
@@ -231,7 +233,7 @@ exports.ProductObject = new graphql_1.GraphQLObjectType({
                     for (let x = 0; x < 12; x++) {
                         const startDate = new Date(currYear, x, 1);
                         const endDate = new Date(currYear, (x + 1), 0);
-                        const totalSold = yield dataPool.purcahseWithProduct.aggregate({
+                        const totalSold = yield prismaConfig_1.default.purcahseWithProduct.aggregate({
                             where: {
                                 AND: {
                                     product_id: product.id,
@@ -272,7 +274,7 @@ exports.CategoryObject = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLList)(exports.ProductObject),
             resolve: (category) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const products = yield dataPool.product.findMany({
+                    const products = yield prismaConfig_1.default.product.findMany({
                         where: {
                             category_id: category.id
                         }
@@ -288,7 +290,7 @@ exports.CategoryObject = new graphql_1.GraphQLObjectType({
             type: (0, graphql_1.GraphQLList)(graphql_scalars_1.JSONObjectResolver),
             resolve: (category) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const productDetails = yield dataPool.productDetails.findMany({
+                    const productDetails = yield prismaConfig_1.default.productDetails.findMany({
                         where: {
                             product: {
                                 category_id: category.id
@@ -361,7 +363,7 @@ exports.ProductDetailsObject = new graphql_1.GraphQLObjectType({
             type: exports.ProductObject,
             resolve: (prodDetail) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const product = yield dataPool.product.findMany({
+                    const product = yield prismaConfig_1.default.product.findMany({
                         where: {
                             id: prodDetail.product_id
                         }

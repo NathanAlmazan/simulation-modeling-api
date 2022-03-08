@@ -8,13 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RootMutation = void 0;
 const graphql_1 = require("graphql");
 const graphql_scalars_1 = require("graphql-scalars");
+const prismaConfig_1 = __importDefault(require("../prismaConfig"));
 const graphqlObjects_1 = require("./graphqlObjects");
-const client_1 = require("@prisma/client");
-const dataPool = new client_1.PrismaClient();
 exports.RootMutation = new graphql_1.GraphQLObjectType({
     name: "PurchaseRootMutation",
     description: "Root Mutation for Account Payables",
@@ -35,7 +37,7 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
             resolve: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
                 const supplierInfo = args;
                 try {
-                    const newSupplier = yield dataPool.supplier.create({
+                    const newSupplier = yield prismaConfig_1.default.supplier.create({
                         data: {
                             first_name: supplierInfo.first_name,
                             last_name: supplierInfo.last_name,
@@ -73,7 +75,7 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
             resolve: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
                 const supplierInfo = args;
                 try {
-                    const updatedSupplier = yield dataPool.supplier.update({
+                    const updatedSupplier = yield prismaConfig_1.default.supplier.update({
                         where: {
                             id: supplierInfo.id
                         },
@@ -105,7 +107,7 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
             resolve: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
                 const supplierId = args.supplierId;
                 try {
-                    const purchaseOrders = yield dataPool.purchase.aggregate({
+                    const purchaseOrders = yield prismaConfig_1.default.purchase.aggregate({
                         where: {
                             supplier_id: supplierId
                         },
@@ -116,7 +118,7 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
                     if (purchaseOrders._count.id !== 0) {
                         throw new Error("Supplier have active payables.");
                     }
-                    const deleteSupplier = yield dataPool.supplier.delete({
+                    const deleteSupplier = yield prismaConfig_1.default.supplier.delete({
                         where: {
                             id: supplierId
                         }
@@ -135,7 +137,7 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
             },
             resolve: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const archivedSupplier = yield dataPool.supplier.update({
+                    const archivedSupplier = yield prismaConfig_1.default.supplier.update({
                         where: {
                             id: args.supplierId
                         },
@@ -157,7 +159,7 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
             },
             resolve: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const archivedSupplier = yield dataPool.supplier.update({
+                    const archivedSupplier = yield prismaConfig_1.default.supplier.update({
                         where: {
                             id: args.supplierId
                         },

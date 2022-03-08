@@ -163,9 +163,8 @@ purchaseRoute.post('/upload/receipt/:purchaseId', authentication_1.checkCredenti
         return res.status(201).json({ data: result.data });
     }
 }));
-purchaseRoute.use('/graphql', authentication_1.checkCredentials, (0, express_graphql_1.graphqlHTTP)(req => ({
+purchaseRoute.use('/graphql', (0, express_graphql_1.graphqlHTTP)(req => ({
     schema: Schema,
-    context: req.user,
     graphql: false
 })));
 exports.default = purchaseRoute;

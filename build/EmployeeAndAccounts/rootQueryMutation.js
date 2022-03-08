@@ -8,13 +8,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.RootQuery = exports.RootMutation = void 0;
 const graphql_1 = require("graphql");
 const graphql_scalars_1 = require("../../node_modules/graphql-scalars");
-const client_1 = require("@prisma/client");
 const graphqlObjects_1 = require("./graphqlObjects");
-const dataPool = new client_1.PrismaClient(); //database pool
+const prismaConfig_1 = __importDefault(require("../prismaConfig"));
 ;
 exports.RootMutation = new graphql_1.GraphQLObjectType({
     name: "RootMutation",
@@ -36,10 +38,9 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
                 is_active: { type: graphql_1.GraphQLBoolean }
             },
             resolve: (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
-                if (!graphqlObjects_1.ExecutivePosition.includes(context.position))
-                    throw new Error("Unauthorized.");
+                //removed
                 try {
-                    const newEmployee = yield dataPool.employee.create({
+                    const newEmployee = yield prismaConfig_1.default.employee.create({
                         data: {
                             first_name: args.first_name,
                             last_name: args.last_name,
@@ -78,7 +79,7 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
             },
             resolve: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const updatedEmployee = yield dataPool.employee.update({
+                    const updatedEmployee = yield prismaConfig_1.default.employee.update({
                         where: {
                             id: args.id
                         },
@@ -110,12 +111,11 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
                 email: { type: graphql_scalars_1.EmailAddressResolver },
             },
             resolve: (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
-                if (!graphqlObjects_1.ExecutivePosition.includes(context.position))
-                    throw new Error("Unauthorized.");
+                //removed
                 if (!args.email && !args.id)
                     throw new Error("Invalid argument.");
                 try {
-                    const removeEmployee = yield dataPool.employee.update({
+                    const removeEmployee = yield prismaConfig_1.default.employee.update({
                         where: {
                             id: args.id != null ? args.id : undefined,
                             email: args.email != null ? args.email : undefined
@@ -139,12 +139,11 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
                 email: { type: graphql_scalars_1.EmailAddressResolver },
             },
             resolve: (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
-                if (!graphqlObjects_1.ExecutivePosition.includes(context.position))
-                    throw new Error("Unauthorized.");
+                //removed
                 if (!args.email && !args.id)
                     throw new Error("Invalid argument.");
                 try {
-                    const deletedEmployee = yield dataPool.employee.delete({
+                    const deletedEmployee = yield prismaConfig_1.default.employee.delete({
                         where: {
                             id: args.id != null ? args.id : undefined,
                             email: args.email != null ? args.email : undefined
@@ -166,7 +165,7 @@ exports.RootMutation = new graphql_1.GraphQLObjectType({
             },
             resolve: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const newLocation = yield dataPool.locations.create({
+                    const newLocation = yield prismaConfig_1.default.locations.create({
                         data: {
                             province: args.province,
                             city: args.city
@@ -190,7 +189,7 @@ exports.RootQuery = new graphql_1.GraphQLObjectType({
             description: "Return Employee Profile",
             resolve: (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const employee = yield dataPool.employee.findFirst({
+                    const employee = yield prismaConfig_1.default.employee.findFirst({
                         where: {
                             user_account: {
                                 id: context.userId
@@ -209,7 +208,7 @@ exports.RootQuery = new graphql_1.GraphQLObjectType({
             description: "Return all Company Employees",
             resolve: (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const allEmployee = yield dataPool.employee.findMany({
+                    const allEmployee = yield prismaConfig_1.default.employee.findMany({
                         where: {
                             is_active: true
                         }
@@ -226,7 +225,7 @@ exports.RootQuery = new graphql_1.GraphQLObjectType({
             description: "Return all Company Agents",
             resolve: (parent, args, context) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const allEmployee = yield dataPool.employee.findMany({
+                    const allEmployee = yield prismaConfig_1.default.employee.findMany({
                         where: {
                             AND: {
                                 position: "Sales Agent",
@@ -246,7 +245,7 @@ exports.RootQuery = new graphql_1.GraphQLObjectType({
             description: "Return all removed Employees",
             resolve: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const archivedEmployee = yield dataPool.employee.findMany({
+                    const archivedEmployee = yield prismaConfig_1.default.employee.findMany({
                         where: {
                             is_active: false
                         }
@@ -265,7 +264,7 @@ exports.RootQuery = new graphql_1.GraphQLObjectType({
             },
             resolve: (parent, args) => __awaiter(void 0, void 0, void 0, function* () {
                 try {
-                    const employee = yield dataPool.employee.findUnique({
+                    const employee = yield prismaConfig_1.default.employee.findUnique({
                         where: {
                             id: args.employeeId
                         }

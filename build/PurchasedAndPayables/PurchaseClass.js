@@ -8,10 +8,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updatePayment = exports.addPayment = exports.PurchaseModify = exports.PurchaseOrders = void 0;
-const client_1 = require("@prisma/client");
-const dataPool = new client_1.PrismaClient(); //database pool
+const prismaConfig_1 = __importDefault(require("../prismaConfig"));
 class PurchaseOrders {
     constructor(purchaseInfo, products) {
         this.purchaseData = purchaseInfo;
@@ -28,7 +30,7 @@ class PurchaseOrders {
                 let orderAmount = 0;
                 for (let i = 0; i < this.purchaseProducts.length; i++) {
                     const currProduct = this.purchaseProducts[i];
-                    const productData = yield dataPool.product.findUnique({
+                    const productData = yield prismaConfig_1.default.product.findUnique({
                         where: {
                             id: currProduct.id
                         },
@@ -61,7 +63,7 @@ class PurchaseOrders {
                 const finalAmount = (orderAmount + addCharge) - discount;
                 const purchaseDate = new Date(this.purchaseData.purchase_date).toISOString();
                 const dueDate = new Date(this.purchaseData.due_date).toISOString();
-                const newPurchaseOrder = yield dataPool.purchase.create({
+                const newPurchaseOrder = yield prismaConfig_1.default.purchase.create({
                     data: {
                         supplier_id: this.purchaseData.supplier_id,
                         invoice_id: this.purchaseData.invoice_id,
@@ -79,7 +81,7 @@ class PurchaseOrders {
                 });
                 for (let x = 0; x < updateProducts.length; x++) {
                     const currProduct = updateProducts[x];
-                    yield dataPool.product.update({
+                    yield prismaConfig_1.default.product.update({
                         where: {
                             id: currProduct.id
                         },
@@ -101,7 +103,7 @@ class PurchaseOrders {
             if (this.purchaseProducts.length === 0)
                 return { status: false, message: "This order have no product." };
             try {
-                const currPurchase = yield dataPool.purchase.findUnique({
+                const currPurchase = yield prismaConfig_1.default.purchase.findUnique({
                     where: {
                         id: purchaseId
                     },
@@ -117,7 +119,7 @@ class PurchaseOrders {
                     return { status: false, message: "Order is already delivered." };
                 if (currPurchase.is_paid == true)
                     return { status: false, message: "Order is already paid." };
-                yield dataPool.purcahseWithProduct.deleteMany({
+                yield prismaConfig_1.default.purcahseWithProduct.deleteMany({
                     where: {
                         purchase_id: currPurchase.id
                     }
@@ -127,7 +129,7 @@ class PurchaseOrders {
                 let orderAmount = 0;
                 for (let i = 0; i < this.purchaseProducts.length; i++) {
                     const currProduct = this.purchaseProducts[i];
-                    const productData = yield dataPool.product.findUnique({
+                    const productData = yield prismaConfig_1.default.product.findUnique({
                         where: {
                             id: currProduct.id
                         },
@@ -160,7 +162,7 @@ class PurchaseOrders {
                 const finalAmount = (orderAmount + addCharge) - discount;
                 const purchaseDate = new Date(this.purchaseData.purchase_date).toISOString();
                 const dueDate = new Date(this.purchaseData.due_date).toISOString();
-                const newPurchaseOrder = yield dataPool.purchase.update({
+                const newPurchaseOrder = yield prismaConfig_1.default.purchase.update({
                     where: {
                         id: currPurchase.id
                     },
@@ -181,7 +183,7 @@ class PurchaseOrders {
                 });
                 for (let x = 0; x < updateProducts.length; x++) {
                     const currProduct = updateProducts[x];
-                    yield dataPool.product.update({
+                    yield prismaConfig_1.default.product.update({
                         where: {
                             id: currProduct.id
                         },
@@ -206,7 +208,7 @@ class PurchaseModify {
     setDelivered() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const currPurchase = yield dataPool.purchase.findUnique({
+                const currPurchase = yield prismaConfig_1.default.purchase.findUnique({
                     where: {
                         id: this.purchaseId
                     },
@@ -227,7 +229,7 @@ class PurchaseModify {
                 });
                 if (!currPurchase)
                     return { status: false, message: "Order does not exist." };
-                const updatedPurchase = yield dataPool.purchase.update({
+                const updatedPurchase = yield prismaConfig_1.default.purchase.update({
                     where: {
                         id: this.purchaseId
                     },
@@ -237,7 +239,7 @@ class PurchaseModify {
                 });
                 for (let i = 0; i < currPurchase.purchased.length; i++) {
                     const currProduct = currPurchase.purchased[i];
-                    yield dataPool.product.update({
+                    yield prismaConfig_1.default.product.update({
                         where: {
                             id: currProduct.product.id
                         },
@@ -256,7 +258,7 @@ class PurchaseModify {
     setInactive() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const currPurchase = yield dataPool.purchase.findUnique({
+                const currPurchase = yield prismaConfig_1.default.purchase.findUnique({
                     where: {
                         id: this.purchaseId
                     },
@@ -274,7 +276,7 @@ class PurchaseModify {
                     return { status: false, message: "Purchase is already paid." };
                 if (currPurchase.payables.length !== 0)
                     return { status: false, message: "Purchase have payment ongoing already." };
-                const updatedPurchase = yield dataPool.purchase.update({
+                const updatedPurchase = yield prismaConfig_1.default.purchase.update({
                     where: {
                         id: this.purchaseId
                     },
@@ -292,7 +294,7 @@ class PurchaseModify {
     setActive() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const currPurchase = yield dataPool.purchase.findUnique({
+                const currPurchase = yield prismaConfig_1.default.purchase.findUnique({
                     where: {
                         id: this.purchaseId
                     },
@@ -302,7 +304,7 @@ class PurchaseModify {
                 });
                 if (!currPurchase)
                     return { status: false, message: "Purchase does not exist." };
-                const updatedPurchase = yield dataPool.purchase.update({
+                const updatedPurchase = yield prismaConfig_1.default.purchase.update({
                     where: {
                         id: this.purchaseId
                     },
@@ -320,7 +322,7 @@ class PurchaseModify {
     deletePurchase() {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const currPurchase = yield dataPool.purchase.findUnique({
+                const currPurchase = yield prismaConfig_1.default.purchase.findUnique({
                     where: {
                         id: this.purchaseId
                     },
@@ -341,12 +343,12 @@ class PurchaseModify {
                     return { status: false, message: "Purchase have payment ongoing already." };
                 if (currPurchase.is_active == true)
                     return { status: false, message: "Purchase is active." };
-                yield dataPool.purcahseWithProduct.deleteMany({
+                yield prismaConfig_1.default.purcahseWithProduct.deleteMany({
                     where: {
                         purchase_id: this.purchaseId
                     }
                 });
-                const deletedPurchase = yield dataPool.purchase.delete({
+                const deletedPurchase = yield prismaConfig_1.default.purchase.delete({
                     where: {
                         id: this.purchaseId
                     }
@@ -361,7 +363,7 @@ class PurchaseModify {
     uploadInvoice(fileName) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const uploaded = yield dataPool.purchase.update({
+                const uploaded = yield prismaConfig_1.default.purchase.update({
                     where: {
                         id: this.purchaseId
                     },
@@ -379,7 +381,7 @@ class PurchaseModify {
     uploadReceipt(fileName) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const uploaded = yield dataPool.payables.update({
+                const uploaded = yield prismaConfig_1.default.payables.update({
                     where: {
                         id: this.purchaseId
                     },
@@ -399,7 +401,7 @@ exports.PurchaseModify = PurchaseModify;
 function addPayment(purchaseId, accountId, payment) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const currPurchase = yield dataPool.purchase.findUnique({
+            const currPurchase = yield prismaConfig_1.default.purchase.findUnique({
                 where: {
                     id: purchaseId
                 },
@@ -413,7 +415,7 @@ function addPayment(purchaseId, accountId, payment) {
                 return { status: false, message: "Order does not exist." };
             if (currPurchase.is_paid == true)
                 return { status: false, message: "Order is already paid." };
-            const addedTransaction = yield dataPool.payables.create({
+            const addedTransaction = yield prismaConfig_1.default.payables.create({
                 data: {
                     purchase_id: purchaseId,
                     account_id: accountId,
@@ -428,7 +430,7 @@ function addPayment(purchaseId, accountId, payment) {
             const currValue = totalPaid + payment;
             const balance = parseFloat(currPurchase.total_amount.toFixed(2)) - currValue;
             if (balance <= 0) {
-                yield dataPool.purchase.update({
+                yield prismaConfig_1.default.purchase.update({
                     where: {
                         id: purchaseId
                     },
@@ -448,7 +450,7 @@ exports.addPayment = addPayment;
 function updatePayment(paymentId, payment) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const updatedTransaction = yield dataPool.payables.update({
+            const updatedTransaction = yield prismaConfig_1.default.payables.update({
                 where: {
                     id: paymentId
                 },
@@ -456,7 +458,7 @@ function updatePayment(paymentId, payment) {
                     amount_paid: payment
                 }
             });
-            const currPurchase = yield dataPool.purchase.findUnique({
+            const currPurchase = yield prismaConfig_1.default.purchase.findUnique({
                 where: {
                     id: updatedTransaction.purchase_id
                 },
@@ -474,7 +476,7 @@ function updatePayment(paymentId, payment) {
             const currValue = totalPaid;
             const balance = parseFloat(currPurchase.total_amount.toFixed(2)) - currValue;
             if (balance <= 0) {
-                yield dataPool.purchase.update({
+                yield prismaConfig_1.default.purchase.update({
                     where: {
                         id: updatedTransaction.purchase_id
                     },
@@ -484,7 +486,7 @@ function updatePayment(paymentId, payment) {
                 });
             }
             else {
-                yield dataPool.purchase.update({
+                yield prismaConfig_1.default.purchase.update({
                     where: {
                         id: updatedTransaction.purchase_id
                     },
