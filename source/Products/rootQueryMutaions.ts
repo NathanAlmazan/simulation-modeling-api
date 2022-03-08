@@ -46,6 +46,8 @@ export const RootMutation = new GraphQLObjectType({
                             category_id: (args as Product).category_id
                         },
                     });
+
+                    await dataPool.$disconnect();
                     return newProduct;
                 } catch (err) {
                     throw new Error((err as Error).message);
@@ -336,6 +338,8 @@ export const RootQuery = new GraphQLObjectType({
                             stocks: 'desc'
                         }
                     });
+
+                    await dataPool.$disconnect();
                     return showAllProducts;
                 } catch (err) {
                     throw new Error((err as Error).message);
@@ -356,6 +360,8 @@ export const RootQuery = new GraphQLObjectType({
                             stocks: 'desc'
                         }
                     });
+
+                    await dataPool.$disconnect();
                     return showAllProducts;
                 } catch (err) {
                     throw new Error((err as Error).message);

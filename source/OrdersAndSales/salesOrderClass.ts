@@ -101,6 +101,8 @@ export class SalesOrder {
                     productId: productInfo.id,
                     newStocks: stocksLeft
                 });
+
+                await dataPool.$disconnect();
                 
             } catch (err) {
                 return { status: false, message: `Item ${i + 1}: ${(err as Error).message}.` };
