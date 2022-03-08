@@ -893,7 +893,7 @@ function generateInvoicePDF(orderId) {
                     inv_fileName: url,
                 }
             });
-            return { status: true, message: fileName };
+            return { status: true, message: url };
         }
         catch (err) {
             return { status: false, message: err.message };
@@ -942,7 +942,7 @@ function generateReceiptPDF(orderId) {
                     receipt_file: url,
                 }
             });
-            return { status: true, message: fileName };
+            return { status: true, message: url };
         }
         catch (err) {
             return { status: false, message: err.message };
